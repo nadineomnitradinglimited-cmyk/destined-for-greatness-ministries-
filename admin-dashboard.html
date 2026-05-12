@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Donations</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #F4C430;
+            --dark: #1a1a1a;
+            --cream: #f8f6f1;
+            --accent: #2a2a2a;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: var(--dark);
+            color: var(--gold);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--gold);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .stat-card .change {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-btn:hover {
+            color: var(--dark);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ff9800;
+        }
+
+        .status-failed {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(244, 196, 48, 0.3);
+        }
+
+        .btn.secondary {
+            background: #e0e0e0;
+            color: var(--dark);
+        }
+
+        .btn.secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button.active {
+            background: var(--gold);
+            color: var(--dark);
+            border-color: var(--gold);
+        }
+
+        .pagination button:hover:not(.active) {
+            background: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            table th, table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💚 Donation Dashboard</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Donations</h3>
+                <div class="value" id="totalDonations">-</div>
+                <div class="change">All time</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Amount Raised</h3>
+                <div class="value" id="totalAmount">-</div>
+                <div class="change">USD</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Donation</h3>
+                <div class="value" id="avgAmount">-</div>
+                <div class="change">Per donation</div>
+            </div>
+            <div class="stat-card">
+                <h3>Email Subscribers</h3>
+                <div class="value" id="totalSubscribers">-</div>
+                <div class="change">Active subscribers</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+            <button class="tab-btn" onclick="switchTab('donations')">All Donations</button>
+            <button class="tab-btn" onclick="switchTab('subscribers')">Subscribers</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="chart-container">
+                <h2>Monthly Donations</h2>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Donations by Type</h2>
+                <canvas id="typeChart"></canvas>
+            </div>
+
+            <div class="actions">
+                <button class="btn" onclick="exportDonations()">📥 Export as CSV</button>
+            </div>
+        </div>
+
+        <!-- Donations Tab -->
+        <div id="donations" class="tab-content">
+            <div class="table-container">
+                <div class="search-box">
+                    <input type="text" id="donationSearch" placeholder="Search by name or email..." onkeyup="filterDonations()">
+                </div>
+                
+                <div class="loading" id="donationsLoading">Loading donations...</div>
+                <table id="donationsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="donationsBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="donationsPagination"></div>
+        </div>
+
+        <!-- Subscribers Tab -->
+        <div id="subscribers" class="tab-content">
+            <div class="table-container">
+                <div class="search-box">
+                    <input type="text" id="subscriberSearch" placeholder="Search subscribers..." onkeyup="filterSubscribers()">
+                </div>
+                
+                <div class="loading" id="subscribersLoading">Loading subscribers...</div>
+                <table id="subscribersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Joined Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscribersBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allDonations = [];
+        let allSubscribers = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Check authentication
+        function checkAuth() {
+            // TODO: Implement authentication check
+            // If not authenticated, redirect to login page
+        }
+
+        // Load data on page load
+        window.addEventListener('load', () => {
+            loadStats();
+            loadDonations();
+            loadSubscribers();
+            loadMonthlyChart();
+            loadTypeChart();
+        });
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+
+                document.getElementById('totalDonations').textContent = data.totalDonations || '0';
+                document.getElementById('totalAmount').textContent = '$' + (data.totalAmount || 0).toFixed(2);
+                document.getElementById('avgAmount').textContent = '$' + (data.averageAmount || 0).toFixed(2);
+
+                // Load subscribers count
+                const subResponse = await fetch('/api/admin/subscribers');
+                const subs = await subResponse.json();
+                document.getElementById('totalSubscribers').textContent = subs.length;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load donations
+        async function loadDonations() {
+            try {
+                const response = await fetch('/api/admin/donations');
+                allDonations = await response.json();
+                displayDonations();
+                document.getElementById('donationsLoading').style.display = 'none';
+                document.getElementById('donationsTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error loading donations:', error);
+                document.getElementById('donationsLoading').textContent = 'Error loading donations';
+            }
+        }
+
+        // Display donations
+        function displayDonations() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginated = allDonations.slice(start, end);
+
+            const tbody = document.getElementById('donationsBody');
+            tbody.innerHTML = '';
+
+            paginated.forEach(donation => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${donation.first_name} ${donation.last_name}</td>
+                    <td>${donation.email}</td>
+                    <td>$${donation.amount.toFixed(2)}</td>
+                    <td>${donation.donation_type || 'General'}</td>
+                    <td>${new Date(donation.created_at).toLocaleDateString()}</td>
+                    <td><span class="status-badge status-${donation.status}">${donation.status}</span></td>
+                `;
+            });
+
+            // Pagination
+            const totalPages = Math.ceil(allDonations.length / itemsPerPage);
+            const paginationDiv = document.getElementById('donationsPagination');
+            paginationDiv.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = i === currentPage ? 'active' : '';
+                btn.onclick = () => {
+                    currentPage = i;
+                    displayDonations();
+                    window.scrollTo(0, 0);
+                };
+                paginationDiv.appendChild(btn);
+            }
+        }
+
+        // Filter donations
+        function filterDonations() {
+            const searchTerm = document.getElementById('donationSearch').value.toLowerCase();
+            allDonations = allDonations.filter(d => 
+                d.first_name.toLowerCase().includes(searchTerm) ||
+                d.last_name.toLowerCase().includes(searchTerm) ||
+                d.email.toLowerCase().includes(searchTerm)
+            );
+            currentPage = 1;
+            displayDonations();
+        }
+
+        // Load subscribers
+        async function loadSubscribers() {
+            try {
+                const response = await fetch('/api/admin/subscribers');
+                allSubscribers = await response.json();
+                displaySubscribers();
+                document.getElementById('subscribersLoading').style.display = 'none';
+                document.getElementById('subscribersTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error loading subscribers:', error);
+            }
+        }
+
+        // Display subscribers
+        function displaySubscribers() {
+            const tbody = document.getElementById('subscribersBody');
+            tbody.innerHTML = '';
+
+            allSubscribers.forEach(sub => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${sub.name || 'N/A'}</td>
+                    <td>${sub.email}</td>
+                    <td>${new Date(sub.created_at).toLocaleDateString()}</td>
+                `;
+            });
+        }
+
+        // Filter subscribers
+        function filterSubscribers() {
+            const searchTerm = document.getElementById('subscriberSearch').value.toLowerCase();
+            const filtered = allSubscribers.filter(s => 
+                s.email.toLowerCase().includes(searchTerm) ||
+                (s.name && s.name.toLowerCase().includes(searchTerm))
+            );
+            displaySubscribers();
+        }
+
+        // Load monthly chart
+        async function loadMonthlyChart() {
+            try {
+                const response = await fetch('/api/admin/monthly-donations');
+                const data = await response.json();
+
+                const ctx = document.getElementById('monthlyChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => d.month).reverse(),
+                        datasets: [{
+                            label: 'Amount Donated',
+                            data: data.map(d => d.total).reverse(),
+                            borderColor: '#F4C430',
+                            backgroundColor: 'rgba(244, 196, 48, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading monthly chart:', error);
+            }
+        }
+
+        // Load type chart
+        async function loadTypeChart() {
+            try {
+                const response = await fetch('/api/admin/donations-by-type');
+                const data = await response.json();
+
+                const ctx = document.getElementById('typeChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.map(d => d.donation_type || 'General'),
+                        datasets: [{
+                            data: data.map(d => d.total),
+                            backgroundColor: [
+                                '#F4C430',
+                                '#28a745',
+                                '#007bff',
+                                '#ffc107',
+                                '#dc3545'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading type chart:', error);
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Export donations as CSV
+        async function exportDonations() {
+            try {
+                const response = await fetch('/api/admin/export-donations');
+                const csv = await response.text();
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `donations-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+            } catch (error) {
+                console.error('Error exporting:', error);
+                alert('Error exporting donations');
+            }
+        }
+
+        // Logout
+        function logout() {
+            // TODO: Implement logout
+            alert('Logout functionality to be implemented');
+        }
+    </script>
+</body>
+</html>

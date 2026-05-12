@@ -1,0 +1,16 @@
+{
+  "name": "Destined for Greatness Messianic Ministries",
+  "short_name": "DFG Ministries",
+  "description": "Destined for Greatness Messianic Ministries – education, charity, and spiritual growth.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d0d0d",
+  "theme_color": "#F4C430",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "logo.jpg", "sizes": "192x192", "type": "image/jpeg" },
+    { "src": "logo.jpg", "sizes": "512x512", "type": "image/jpeg" }
+  ],
+  "screenshots": [],
+  "categories": ["religion", "education", "nonprofit"]
+}

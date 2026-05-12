@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Ministries - Destined for Greatness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #F4C430;
+            --dark: #1a1a1a;
+            --cream: #f8f6f1;
+            --accent: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--cream);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--dark);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-brand {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex: 1;
+        }
+
+        nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.25rem;
+        }
+
+        nav a:hover {
+            color: #fff;
+            border-bottom-color: var(--gold);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--accent) 100%);
+            color: var(--gold);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Ministry Cards */
+        .ministry-item {
+            background: white;
+            margin-bottom: 3rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .ministry-item:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+        }
+
+        .ministry-header {
+            background: linear-gradient(135deg, var(--gold) 0%, #d4af37 100%);
+            padding: 2rem;
+            color: var(--dark);
+        }
+
+        .ministry-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ministry-icon {
+            font-size: 2.5rem;
+        }
+
+        .ministry-body {
+            padding: 2rem;
+        }
+
+        .ministry-body h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .ministry-body p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        /* Programs List */
+        .programs-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .program-item {
+            background: rgba(244, 196, 48, 0.1);
+            padding: 1.5rem;
+            border-left: 4px solid var(--gold);
+            border-radius: 4px;
+        }
+
+        .program-item h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .program-item p {
+            font-size: 0.95rem;
+            color: #666;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .stat-box {
+            background: rgba(244, 196, 48, 0.15);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 2px solid var(--gold);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--accent) 100%);
+            color: var(--gold);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin: 3rem 0;
+        }
+
+        .cta-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 196, 48, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(244, 196, 48, 0.5);
+            background: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--gold);
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 3px solid var(--gold);
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+                flex-direction: column;
+                align-items: center;
+                flex: none;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .ministry-header h2 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <img src="logo.jpg" alt="Destined for Greatness" class="logo-brand">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="ministries.html">Our Ministries</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>Our Ministries</h1>
+        <p>Serving our community through education, charity, and spiritual growth</p>
+        <img src="logo.jpg" alt="Destined for Greatness Logo" style="width: 80px; margin-top: 1rem; opacity: 0.9;">
+    </section>
+
+    <div class="container">
+        <!-- Educational Ministry -->
+        <div class="ministry-item">
+            <div class="ministry-header">
+                <h2><span class="ministry-icon">📚</span>Kaloko New Life School</h2>
+            </div>
+            <div class="ministry-body">
+                <h3>Excellence in Faith-Based Jewish Education</h3>
+                <p>
+                    Kaloko New Life School provides comprehensive biblical education integrated with Jewish heritage, 
+                    language, and culture. We believe that quality education rooted in faith in Messiah creates thoughtful, 
+                    compassionate, and purposeful leaders who honor their Jewish identity while embracing their faith in Yeshua.
+                </p>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">Academic Excellence + Spiritual Formation</h4>
+                <p style="margin-bottom: 1.5rem;">
+                    Our curriculum combines rigorous academics with spiritual development, Hebrew language instruction, 
+                    and deep engagement with Jewish traditions and Messianic faith. Students graduate with strong academic 
+                    foundations, cultural pride, and a living faith.
+                </p>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">Grade Levels & Programs:</h4>
+                <div class="programs-list">
+                    <div class="program-item">
+                        <h4>Early Learning (Ages 3-5)</h4>
+                        <p>Foundation in Hebrew, Jewish culture, Bible stories, and faith basics in a nurturing environment</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Elementary (Grades 1-6)</h4>
+                        <p>Core academics with Hebrew language, Torah study, Jewish history, and character development</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Secondary (Grades 7-12)</h4>
+                        <p>Advanced biblical studies, Hebrew literature, Jewish philosophy, and college preparation with faith integration</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Adult Education</h4>
+                        <p>Evening classes and seminars on Messianic faith, Torah commentary, Hebrew language, and Jewish history</p>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">What Makes Kaloko New Life School Special:</h4>
+                <ul style="margin: 1rem 0 1.5rem 2rem; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; color: #666;">
+                    <li style="margin-bottom: 0.5rem;"><strong>Hebrew Language Integration:</strong> Students develop fluency through immersion in daily instruction</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Jewish Culture & Traditions:</strong> Celebrating holidays, studying Torah, and understanding our heritage</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Messianic Faith Foundation:</strong> Biblical teaching that connects Old and New Testaments</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Character Development:</strong> Mentoring in values, leadership, and service to others</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Small Class Sizes:</strong> Personalized attention and genuine community among students and teachers</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Experienced Educators:</strong> Dedicated teachers passionate about both academics and faith formation</li>
+                </ul>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">Extracurricular Activities & Events:</h4>
+                <div class="programs-list">
+                    <div class="program-item">
+                        <h4>Youth Groups & Clubs</h4>
+                        <p>Debate, music, sports, arts, and interest-based clubs</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Holiday Celebrations</h4>
+                        <p>Passover Seders, Sukkot festivals, Hanukkah celebrations with spiritual significance</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Community Service</h4>
+                        <p>Students engaged in charitable work and community outreach projects</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Retreats & Camps</h4>
+                        <p>Summer and seasonal programs for spiritual growth and bonding</p>
+                    </div>
+                </div>
+
+                <div class="stats-section" style="margin-top: 2rem;">
+                    <div class="stat-box">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">Students Enrolled</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Faculty & Staff</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">College Acceptance Rate</div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 2rem; padding: 1.5rem; background: rgba(244, 196, 48, 0.15); border-radius: 4px; border-left: 4px solid var(--gold); font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; color: #666;">
+                    <em><strong>Enrollment Open:</strong> We welcome inquiries for tours, interviews, and enrollment at all grade levels. 
+                    Join our growing Kaloko New Life School community of students discovering their greatness in faith and learning!</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- Charity Ministry -->
+        <div class="ministry-item">
+            <div class="ministry-header">
+                <h2><span class="ministry-icon">🤝</span>Community Charitable Services</h2>
+            </div>
+            <div class="ministry-body">
+                <h3>Meeting Real Needs with Compassion</h3>
+                <p>
+                    Following the command to love our neighbors, our charity ministry provides practical assistance 
+                    to families in need within our community. We believe faith without works is dead, and we're committed 
+                    to demonstrating Messiah's love through service.
+                </p>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">Our Services Include:</h4>
+                <div class="programs-list">
+                    <div class="program-item">
+                        <h4>Food Assistance</h4>
+                        <p>Regular food distributions and meal support for families facing food insecurity</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Financial Support</h4>
+                        <p>Emergency assistance for rent, utilities, and medical expenses</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Family Services</h4>
+                        <p>Counseling, job training, and mentorship programs for families</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Elderly Care</h4>
+                        <p>Special support and community for seniors in our Jewish population</p>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-box">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Families Served Annually</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Meals Distributed Monthly</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Volunteer-Powered</div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 1.5rem; color: #666;">
+                    <em>All donations are tax-deductible and go directly to serving those in need. 
+                    We operate with complete transparency and accountability.</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- Spiritual Ministry -->
+        <div class="ministry-item">
+            <div class="ministry-header">
+                <h2><span class="ministry-icon">🕯️</span>Spiritual & Worship Ministry</h2>
+            </div>
+            <div class="ministry-body">
+                <h3>Gathering in Faith and Community</h3>
+                <p>
+                    Our spiritual ministry brings together believers for worship, prayer, and fellowship. 
+                    We celebrate Jewish holidays with Messianic significance and create a welcoming community 
+                    for those seeking to deepen their faith.
+                </p>
+
+                <h4 style="margin-top: 1.5rem; color: var(--gold);">Our Offerings:</h4>
+                <div class="programs-list">
+                    <div class="program-item">
+                        <h4>Weekly Worship Services</h4>
+                        <p>Shabbat services combining Hebrew tradition and Messianic faith</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Holiday Celebrations</h4>
+                        <p>Passover, Shavuot, Sukkot, and other biblical festivals with spiritual meaning</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Prayer & Bible Study</h4>
+                        <p>Weekly gatherings for deep spiritual reflection and Scripture study</p>
+                    </div>
+                    <div class="program-item">
+                        <h4>Pastoral Counseling</h4>
+                        <p>Spiritual guidance and support for life's challenges through a faith perspective</p>
+                    </div>
+                </div>
+
+                <p style="margin-top: 1.5rem; color: #666;">
+                    <em>Whether you're a longtime believer or new to faith, our community welcomes you 
+                    with open hearts and genuine care.</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h3>Ready to Get Involved?</h3>
+            <p>Whether you want to volunteer, donate, or learn more about our programs—we'd love to connect with you.</p>
+            <a href="contact.html" class="cta-button">Contact Us Today</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Destined for Greatness Messianic Ministries. All rights reserved.</p>
+        <p>Serving with love, faith, and purpose.</p>
+    </footer>
+</body>
+</html>

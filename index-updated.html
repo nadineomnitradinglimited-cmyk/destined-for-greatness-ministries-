@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destined for Greatness - Messianic Ministries</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #F4C430;
+            --dark: #1a1a1a;
+            --cream: #f8f6f1;
+            --accent: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--cream);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--dark);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-brand {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex: 1;
+        }
+
+        nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.25rem;
+        }
+
+        nav a:hover {
+            color: #fff;
+            border-bottom-color: var(--gold);
+        }
+
+        /* Header Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--accent) 100%);
+            color: var(--gold);
+            padding: 4rem 2rem;
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+            animation: slideDown 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(244, 196, 48, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(244, 196, 48, 0.5);
+            background: #fff;
+        }
+
+        .donate-button {
+            background: #28a745;
+            color: white;
+        }
+
+        .donate-button:hover {
+            background: #218838;
+            color: white;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gold);
+        }
+
+        .mission-statement {
+            background: rgba(244, 196, 48, 0.1);
+            border-left: 5px solid var(--gold);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--gold);
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            border-top: 3px solid var(--gold);
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+                flex-direction: column;
+                align-items: center;
+                flex: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .section h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <img src="logo.jpg" alt="Destined for Greatness" class="logo-brand">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="ministries.html">Our Ministries</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <img src="logo.jpg" alt="Destined for Greatness Logo" class="hero-logo">
+            <h1>Destined for Greatness</h1>
+            <p class="hero-subtitle">Messianic Ministries</p>
+            <div class="cta-buttons">
+                <a href="ministries.html" class="cta-button">Explore Our Work</a>
+                <a href="donate.html" class="cta-button donate-button">💚 Make a Donation</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <section class="section">
+            <h2>Welcome to Our Ministry</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+                Destined for Greatness Messianic Ministries is dedicated to spreading the Gospel of Yeshua (Jesus) within the Jewish community and beyond. We are committed to bridging the gap between Jewish heritage and faith in Messiah, serving our community through education, charity, and spiritual growth.
+            </p>
+            <div class="mission-statement">
+                <strong>"For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do." - Ephesians 2:10</strong>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Our Core Values</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3>Biblical Foundation</h3>
+                    <p>Rooted in Torah and the New Testament, teaching the complete Scripture with Jewish cultural context.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community Service</h3>
+                    <p>Serving the Jewish community and beyond through practical charity, education, and support programs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Spiritual Growth</h3>
+                    <p>Nurturing believers in their faith journey and helping others discover the Messiah through love and truth.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>What We Do</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                Our ministry operates through three main pillars:
+            </p>
+            <ul style="font-size: 1.1rem; margin-left: 2rem; line-height: 2;">
+                <li><strong>Educational Programs</strong> - Kaloko New Life School serving students from preschool through adult education</li>
+                <li><strong>Charitable Work</strong> - Supporting families in need within our community</li>
+                <li><strong>Spiritual Ministry</strong> - Worship, counseling, and faith development</li>
+            </ul>
+            <p style="font-size: 1rem; margin-top: 2rem; color: #666;">
+                <a href="ministries.html" style="color: var(--gold); text-decoration: none; font-weight: bold;">Learn more about each ministry →</a>
+            </p>
+        </section>
+
+        <section class="section" style="background: rgba(244, 196, 48, 0.15); padding: 3rem; border-radius: 8px; text-align: center;">
+            <h2>Support Our Mission</h2>
+            <p style="font-size: 1.1rem; margin: 1.5rem 0;">
+                Your generous donations help us provide education, feed families in need, and spread the message of Messiah's love.
+            </p>
+            <a href="donate.html" class="cta-button donate-button" style="margin-top: 1rem;">💚 Donate Now</a>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Destined for Greatness Messianic Ministries. All rights reserved.</p>
+        <p>Serving with love, faith, and purpose.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaloko New Life School - Destined for Greatness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#F4C430">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #F4C430;
+            --gold-light: #fde98a;
+            --dark: #0d0d0d;
+            --dark2: #1a1a2e;
+            --cream: #fafaf7;
+            --gray: #6b7280;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --green: #16a34a;
+            --radius: 16px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 48px rgba(0,0,0,0.14);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0; z-index: 200;
+            background: rgba(13,13,13,0.97);
+            backdrop-filter: blur(12px);
+            padding: 0 2rem;
+            height: 70px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            object-fit: cover;
+        }
+
+        .nav-logo span {
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 500;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-give {
+            background: var(--gold) !important;
+            color: var(--dark) !important;
+            font-weight: 700 !important;
+        }
+
+        .nav-give:hover { background: var(--gold-light) !important; }
+
+        /* ── HERO ── */
+        .school-hero {
+            background: linear-gradient(160deg, #0d0d0d 0%, #1a1a2e 60%, #16213e 100%);
+            padding: 5rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 70% 50% at 50% 70%, rgba(244,196,48,0.08) 0%, transparent 70%);
+        }
+
+        .hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(244,196,48,0.12);
+            border: 1px solid rgba(244,196,48,0.3);
+            color: var(--gold);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-title span { color: var(--gold); }
+
+        .hero-sub {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat .num {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .hero-stat .lbl {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 0.25rem;
+        }
+
+        /* ── SECTIONS ── */
+        .section { padding: 5rem 2rem; }
+        .section-alt { background: var(--light); }
+        .section-dark { background: var(--dark2); }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-label.light { color: var(--gold); }
+
+        .gold-line {
+            width: 48px; height: 4px;
+            background: var(--gold);
+            border-radius: 2px;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title.light { color: white; }
+
+        .section-desc {
+            font-size: 1rem;
+            color: var(--gray);
+            max-width: 580px;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-desc.light { color: rgba(255,255,255,0.55); }
+
+        /* ── FEATURE LIST ── */
+        .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .feature-list li {
+            padding: 0.75rem 1rem 0.75rem 1.25rem;
+            background: white;
+            border-left: 4px solid var(--gold);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: #374151;
+            box-shadow: var(--shadow);
+        }
+
+        .feature-list li strong { color: var(--dark); }
+
+        /* ── PROGRAMS GRID ── */
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .program-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            transition: border-color 0.25s, transform 0.25s;
+        }
+
+        .program-card:hover {
+            border-color: rgba(244,196,48,0.35);
+            transform: translateY(-4px);
+        }
+
+        .program-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .program-card h3 { font-size: 1rem; font-weight: 700; color: white; margin-bottom: 0.5rem; }
+        .program-card p { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
+
+        /* ── GALLERY ── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover img { transform: scale(1.06); }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.72));
+            color: white;
+            padding: 1.5rem 1rem 0.75rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption { transform: translateY(0); }
+
+        /* ── ADMISSIONS ── */
+        .admission-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .info-box {
+            background: rgba(244,196,48,0.1);
+            border-left: 4px solid var(--gold);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.1rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(244,196,48,0.12);
+            background: white;
+        }
+
+        .form-group textarea { resize: vertical; min-height: 110px; }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 0.9rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s;
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+        .success-bar {
+            display: none;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--green);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-bar.show { display: block; }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--dark);
+            color: rgba(255,255,255,0.45);
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        footer p { font-size: 0.85rem; margin: 0.25rem 0; }
+        footer .gold { color: var(--gold); font-weight: 700; }
+
+        /* ── LIGHTBOX ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.93);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox.open { display: flex; }
+
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 92vh;
+            border-radius: 8px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem; right: 2rem;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav { grid-template-columns: 1fr; justify-items: center; height: auto; padding: 0.75rem 1.25rem; gap: 0.5rem; }
+            .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem; }
+            .nav-links a { font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+            .school-hero { padding: 3.5rem 1.25rem 3rem; }
+            .hero-title { font-size: 2rem; }
+            .hero-stats { gap: 1.25rem; }
+            .hero-stat .num { font-size: 1.6rem; }
+            .section { padding: 3rem 1.25rem; }
+            .section-title { font-size: 1.6rem; }
+            .programs-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .admission-card { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">
+            <img src="logo.jpg" alt="Logo">
+            <span>Destined for Greatness</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#ministries">Our Ministries</a></li>
+            <li><a href="school.html" class="active">School</a></li>
+            <li><a href="index.html#donate">Donate</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="index.html#donate" class="nav-give">Give Now</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <div class="school-hero">
+        <div class="hero-inner">
+            <div class="hero-badge">✦ Faith-Based Education</div>
+            <h1 class="hero-title">Kaloko New Life <span>School</span></h1>
+            <p class="hero-sub">Excellence in Faith-Based Jewish Education</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="num">200+</div><div class="lbl">Students Enrolled</div></div>
+                <div class="hero-stat"><div class="num">20+</div><div class="lbl">Faculty & Staff</div></div>
+                <div class="hero-stat"><div class="num">98%</div><div class="lbl">College Acceptance</div></div>
+                <div class="hero-stat"><div class="num">4</div><div class="lbl">Grade Divisions</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="section">
+        <div class="container">
+            <span class="section-label">Who We Are</span>
+            <div class="gold-line"></div>
+            <h2 class="section-title">About the School</h2>
+            <p class="section-desc">Kaloko New Life School was established with a vision to provide quality education rooted in Messianic Jewish faith — nurturing the whole child intellectually, spiritually, and culturally.</p>
+
+            <ul class="feature-list">
+                <li><strong>Hebrew Language Integration</strong> — Students develop fluency through immersion in daily instruction</li>
+                <li><strong>Jewish Culture & Traditions</strong> — Celebrating holidays, studying Torah, and understanding our heritage</li>
+                <li><strong>Messianic Faith Foundation</strong> — Biblical teaching that connects Old and New Testaments</li>
+                <li><strong>Character Development</strong> — Mentoring in values, leadership, and service to others</li>
+                <li><strong>Small Class Sizes</strong> — Personalised attention and genuine community</li>
+                <li><strong>Experienced Educators</strong> — Passionate about both academics and faith formation</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- PROGRAMS -->
+    <section class="section section-dark">
+        <div class="container">
+            <span class="section-label light">Programs</span>
+            <div class="gold-line"></div>
+            <h2 class="section-title light">Grade Levels & Programs</h2>
+            <p class="section-desc light">A full spectrum of faith-based education from early childhood through adult learning.</p>
+
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-icon">🌱</div>
+                    <h3>Early Learning — Ages 3–5</h3>
+                    <p>Foundation in Hebrew, Jewish culture, Bible stories, and faith basics in a warm and nurturing environment.</p>
+                </div>
+                <div class="program-card">
+                    <div class="program-icon">📖</div>
+                    <h3>Elementary — Grades 1–6</h3>
+                    <p>Core academics with Hebrew language, Torah study, Jewish history, and character development.</p>
+                </div>
+                <div class="program-card">
+                    <div class="program-icon">🎓</div>
+                    <h3>Secondary — Grades 7–12</h3>
+                    <p>Advanced biblical studies, Hebrew literature, Jewish philosophy, and college preparation with faith integration.</p>
+                </div>
+                <div class="program-card">
+                    <div class="program-icon">🕯️</div>
+                    <h3>Adult Education</h3>
+                    <p>Evening classes and seminars on Messianic faith, Torah commentary, Hebrew language, and Jewish history.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="section section-alt">
+        <div class="container">
+            <span class="section-label">Gallery</span>
+            <div class="gold-line"></div>
+            <h2 class="section-title">School in Pictures</h2>
+            <p class="section-desc">A glimpse into life at Kaloko New Life School — our campus, classrooms, and students.</p>
+
+            <div class="gallery-grid">
+                <div class="gallery-item" onclick="openLightbox('school.jpeg')">
+                    <img src="school.jpeg" alt="Kaloko New Life School">
+                    <div class="gallery-caption">Kaloko New Life School</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('featured%20school.jpeg')">
+                    <img src="featured%20school.jpeg" alt="Featured School">
+                    <div class="gallery-caption">Featured School</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('how%20the%20school%20started.jpeg')">
+                    <img src="how%20the%20school%20started.jpeg" alt="How the School Started">
+                    <div class="gallery-caption">How the School Started</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('learners.jpeg')">
+                    <img src="learners.jpeg" alt="Learners">
+                    <div class="gallery-caption">Our Learners</div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('kids%20in%20class.jpeg')">
+                    <img src="kids%20in%20class.jpeg" alt="Kids in Class">
+                    <div class="gallery-caption">Kids in Class</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMISSIONS -->
+    <section class="section">
+        <div class="container">
+            <span class="section-label">Enrol</span>
+            <div class="gold-line"></div>
+            <h2 class="section-title">Admissions Enquiry</h2>
+            <p class="section-desc">Enrollment is open at all grade levels. Submit your enquiry and we'll be in touch within 2 business days.</p>
+
+            <div class="admission-card">
+                <div class="info-box">
+                    <strong>What happens next?</strong> After submitting, a member of our admissions team will contact you to schedule a school tour, answer your questions, and guide you through the enrollment process.
+                </div>
+
+                <div class="success-bar" id="admissionSuccess">
+                    <strong>Thank you!</strong> Your admissions enquiry has been received. We will be in touch within 2 business days.
+                </div>
+
+                <form id="admissionForm" onsubmit="handleAdmission(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="parentName">Parent / Guardian Name *</label>
+                            <input type="text" id="parentName" required placeholder="Full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="admissionEmail">Email Address *</label>
+                            <input type="email" id="admissionEmail" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="childName">Child's Full Name *</label>
+                            <input type="text" id="childName" required placeholder="Child's name">
+                        </div>
+                        <div class="form-group">
+                            <label for="childAge">Child's Age *</label>
+                            <input type="number" id="childAge" required placeholder="e.g. 8" min="3" max="99">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gradeLevel">Grade / Programme *</label>
+                            <select id="gradeLevel" required>
+                                <option value="">-- Select --</option>
+                                <option value="early">Early Learning (Ages 3–5)</option>
+                                <option value="elementary">Elementary (Grades 1–6)</option>
+                                <option value="secondary">Secondary (Grades 7–12)</option>
+                                <option value="adult">Adult Education</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="admissionPhone">Phone Number</label>
+                            <input type="tel" id="admissionPhone" placeholder="+1 234 567 8900">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="admissionMessage">Additional Information</label>
+                        <textarea id="admissionMessage" placeholder="Any questions, special needs, or details about your child..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Admissions Enquiry</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p class="gold">Kaloko New Life School</p>
+        <p>Part of Destined for Greatness Messianic Ministries</p>
+        <p style="margin-top:0.5rem;">&copy; 2025 · All rights reserved</p>
+        <p style="margin-top:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.3);">Powered and designed by <span style="color:#F4C430;font-weight:600;">NadineX Technologies</span></p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        function handleAdmission(e) {
+            e.preventDefault();
+            document.getElementById('admissionSuccess').classList.add('show');
+            e.target.reset();
+            document.getElementById('admissionSuccess').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    </script>
+</body>
+</html>
