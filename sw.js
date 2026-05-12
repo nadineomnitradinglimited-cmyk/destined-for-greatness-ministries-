@@ -5,7 +5,7 @@ const ASSETS = [
   '/school.html',
   '/logo.jpg',
   '/banner.jpg',
-  '/banner 2.jpg',
+  '/banner2.jpg',
   '/school.jpeg',
   '/featured school.jpeg',
   '/how the school started.jpeg',
