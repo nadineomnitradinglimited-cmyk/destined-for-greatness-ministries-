@@ -3,175 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Destined for Greatness</title>
+    <title>Staff Access · Destined for Greatness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        :root {
-            --gold: #f4c430;
-            --glass: rgba(21, 16, 11, 0.74);
-            --danger: #c54e4e;
-        }
+    :root {
+        --gold: #f4c430;
+        --gold-light: #fde98a;
+        --dark: #0a0807;
+        --glass: rgba(15, 11, 8, 0.78);
+        --danger: #c54e4e;
+        --success: #52b788;
+    }
 
-        * { box-sizing: border-box; }
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Outfit', sans-serif;
+        background: var(--dark) url('admin-dashboard-bg.jpg') center center / cover fixed no-repeat;
+        color: white;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            font-family: 'Manrope', 'Segoe UI', sans-serif;
-            background: #120f0b url('admin-dashboard-bg.jpg') center center / cover fixed no-repeat;
-            color: white;
-        }
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+            145deg,
+            rgba(5, 3, 2, 0.88) 0%,
+            rgba(10, 8, 5, 0.65) 50%,
+            rgba(5, 3, 2, 0.85) 100%
+        );
+        z-index: 0;
+    }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(8, 6, 4, 0.82), rgba(8, 6, 4, 0.55));
-            z-index: 0;
-        }
+    /* Grain overlay */
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        z-index: 0;
+        pointer-events: none;
+    }
 
-        .login {
-            position: relative;
-            z-index: 1;
-            width: min(460px, calc(100vw - 2rem));
-            background: var(--glass);
-            border: 1px solid rgba(244, 196, 48, 0.24);
-            border-radius: 18px;
-            backdrop-filter: blur(14px);
-            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4);
-            padding: 1.35rem;
-        }
+    /* Floating particles */
+    .particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
 
-        .kicker {
-            margin: 0;
-            color: rgba(244, 196, 48, 0.84);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(244,196,48,0.18);
+        animation: floatUp linear infinite;
+    }
 
-        h1 {
-            margin: 0.25rem 0 0.55rem;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 2.1rem;
-            line-height: 0.95;
-        }
+    @keyframes floatUp {
+        0%   { transform: translateY(110vh) scale(0); opacity: 0; }
+        10%  { opacity: 1; }
+        90%  { opacity: 0.4; }
+        100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
 
-        p {
-            margin: 0 0 1rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
+    .main-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        position: relative;
+        z-index: 2;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 0.75rem;
-            font-size: 0.86rem;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.86);
-        }
+    .login-card {
+        width: min(440px, 100%);
+        background: var(--glass);
+        border: 1px solid rgba(244,196,48,0.2);
+        border-radius: 22px;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 28px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+        padding: 2.5rem 2rem;
+        animation: cardIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
 
-        input {
-            width: 100%;
-            margin-top: 0.35rem;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            padding: 0.72rem 0.8rem;
-            font: inherit;
-        }
+    @keyframes cardIn {
+        from { opacity: 0; transform: translateY(32px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
 
-        input:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(244, 196, 48, 0.2);
-        }
+    .card-top {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-        button {
-            width: 100%;
-            border: 0;
-            border-radius: 999px;
-            background: var(--gold);
-            color: #2d2007;
-            font: inherit;
-            font-weight: 800;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-        }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: rgba(255,255,255,0.35);
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        margin-bottom: 1.75rem;
+        transition: color 0.2s;
+    }
 
-        .status {
-            min-height: 1.1rem;
-            margin-top: 0.75rem;
-            font-size: 0.9rem;
-            color: #9be0b3;
-        }
+    .back-link:hover { color: rgba(244,196,48,0.7); }
 
-        .status.error { color: var(--danger); }
+    .logo-ring {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 1.25rem;
+        border-radius: 50%;
+        border: 2px solid rgba(244,196,48,0.35);
+        box-shadow: 0 0 0 8px rgba(244,196,48,0.06), 0 0 30px rgba(244,196,48,0.15);
+        overflow: hidden;
+        animation: logoPop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+    }
+
+    @keyframes logoPop {
+        from { transform: scale(0.5); opacity: 0; }
+        to   { transform: scale(1); opacity: 1; }
+    }
+
+    .logo-ring img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .kicker {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(244,196,48,0.75);
+        margin-bottom: 0.5rem;
+    }
+
+    h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.0;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+        font-size: 0.86rem;
+        color: rgba(255,255,255,0.45);
+        font-weight: 300;
+    }
+
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(244,196,48,0.2), transparent);
+        margin: 0 -0.5rem 1.75rem;
+    }
+
+    label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 0.4rem;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 1rem;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 12px;
+        color: white;
+        padding: 0.8rem 1rem;
+        font: 0.95rem 'Outfit', sans-serif;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.25); }
+
+    input:focus {
+        outline: none;
+        border-color: rgba(244,196,48,0.5);
+        box-shadow: 0 0 0 3px rgba(244,196,48,0.1);
+        background: rgba(255,255,255,0.08);
+    }
+
+    .submit-btn {
+        width: 100%;
+        border: none;
+        border-radius: 50px;
+        background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+        background-size: 200% auto;
+        color: #0a0807;
+        font: 700 1rem 'Outfit', sans-serif;
+        padding: 0.85rem 1rem;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+        transition: all 0.25s;
+        animation: shimmer 3.5s linear infinite;
+        margin-top: 0.5rem;
+    }
+
+    @keyframes shimmer {
+        0%   { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(244,196,48,0.35);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .status-msg {
+        min-height: 1rem;
+        margin-top: 0.85rem;
+        font-size: 0.88rem;
+        text-align: center;
+        color: var(--success);
+        transition: opacity 0.3s;
+    }
+
+    .status-msg.error { color: var(--danger); }
+
+    /* ── FOOTER ── */
+    footer {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 1.25rem 1rem;
+        border-top: 1px solid rgba(255,255,255,0.04);
+        background: rgba(0,0,0,0.2);
+    }
+
+    .footer-text {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.2);
+        font-weight: 300;
+    }
+
+    .footer-text a {
+        color: rgba(255,255,255,0.3);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .footer-text a:hover { color: rgba(244,196,48,0.6); }
+
+    .nadine-credit {
+        font-size: 0.73rem;
+        color: rgba(255,255,255,0.2);
+        margin-top: 0.35rem;
+    }
+
+    .nadine-credit span {
+        color: rgba(244,196,48,0.5);
+        font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+        .login-card { padding: 2rem 1.5rem; }
+        h1 { font-size: 1.8rem; }
+    }
     </style>
 </head>
 <body>
-    <section class="login">
-        <p class="kicker">Destined for Greatness Ministries</p>
-        <h1>Admin Login</h1>
-        <p>Sign in to manage homepage banners and Bible verses.</p>
-        <form id="loginForm">
-            <label>
-                Username
-                <input id="username" type="text" required autocomplete="username">
-            </label>
-            <label>
-                Password
-                <input id="password" type="password" required autocomplete="current-password">
-            </label>
-            <button type="submit">Sign In</button>
-        </form>
-        <div class="status" id="status"></div>
-    </section>
+
+    <div class="particles" id="particles"></div>
+
+    <div class="main-wrapper">
+        <div class="login-card">
+            <div class="card-top">
+                <a href="index.html" class="back-link">← Back to Website</a>
+                <div class="logo-ring">
+                    <img src="logo.jpg" alt="DFG Logo">
+                </div>
+                <p class="kicker">Destined for Greatness Ministries</p>
+                <h1>Staff Access</h1>
+                <p class="subtitle">Sign in to manage banners, verses &amp; content.</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <form id="loginForm">
+                <label for="username">Username</label>
+                <input id="username" type="text" required autocomplete="username" placeholder="Enter your username">
+
+                <label for="password">Password</label>
+                <input id="password" type="password" required autocomplete="current-password" placeholder="Enter your password">
+
+                <button class="submit-btn" type="submit" id="loginBtn">Sign In →</button>
+            </form>
+
+            <div class="status-msg" id="status"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="footer-text">
+            <a href="index.html">← Return to Main Website</a>
+            &nbsp;·&nbsp; Authorised personnel only
+        </p>
+        <p class="nadine-credit">⚡ Powered and designed by <span>Nadine Technologies</span></p>
+    </footer>
 
     <script>
-        const form = document.getElementById('loginForm');
-        const statusEl = document.getElementById('status');
+    // Particles
+    const pc = document.getElementById('particles');
+    for (let i = 0; i < 14; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 5 + 2;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*10}s;`;
+        pc.appendChild(p);
+    }
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            statusEl.className = 'status';
-            statusEl.textContent = 'Signing in...';
+    // Login
+    const form = document.getElementById('loginForm');
+    const statusEl = document.getElementById('status');
+    const loginBtn = document.getElementById('loginBtn');
 
-            try {
-                if (window.location.protocol === 'file:') {
-                    const user = document.getElementById('username').value.trim();
-                    const pass = document.getElementById('password').value;
-                    if (user === 'admin' && pass === 'admin123') {
-                        localStorage.setItem('dfg_admin_auth', 'true');
-                        window.location.href = './admin-dashboard.html';
-                        return;
-                    }
-                    throw new Error('Invalid username or password.');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.className = 'status-msg';
+        statusEl.textContent = 'Signing in…';
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Signing in…';
+
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value;
+
+        try {
+            if (window.location.protocol === 'file:') {
+                if (user === 'admin' && pass === 'admin123') {
+                    localStorage.setItem('dfg_admin_auth', 'true');
+                    statusEl.textContent = '✓ Access granted. Redirecting…';
+                    setTimeout(() => window.location.href = './admin-dashboard.html', 800);
+                    return;
                 }
-
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: document.getElementById('username').value.trim(),
-                        password: document.getElementById('password').value
-                    })
-                });
-
-                const result = await response.json();
-                if (!response.ok || !result.success) throw new Error(result.message || 'Login failed');
-
-                localStorage.setItem('dfg_admin_auth', 'true');
-                window.location.href = '/admin-dashboard.html';
-            } catch (error) {
-                statusEl.className = 'status error';
-                statusEl.textContent = error.message;
+                throw new Error('Invalid username or password.');
             }
-        });
+
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            });
+
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Login failed.');
+
+            localStorage.setItem('dfg_admin_auth', 'true');
+            statusEl.textContent = '✓ Access granted. Redirecting…';
+            setTimeout(() => window.location.href = '/admin-dashboard.html', 800);
+        } catch (err) {
+            statusEl.className = 'status-msg error';
+            statusEl.textContent = '✕ ' + err.message;
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Sign In →';
+        }
+    });
     </script>
 </body>
 </html>
