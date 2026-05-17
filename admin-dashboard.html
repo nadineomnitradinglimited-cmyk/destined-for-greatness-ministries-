@@ -3,690 +3,615 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Donations</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <title>Admin Dashboard - Destined for Greatness</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap');
 
         :root {
-            --gold: #F4C430;
-            --dark: #1a1a1a;
-            --cream: #f8f6f1;
-            --accent: #2a2a2a;
-            --success: #28a745;
-            --danger: #dc3545;
+            --gold: #f4c430;
+            --dark: #18120a;
+            --paper: rgba(255, 255, 255, 0.94);
+            --glass: rgba(22, 17, 12, 0.72);
+            --success: #2f9d59;
+            --danger: #b74242;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
-            background: #f5f5f5;
-            color: var(--dark);
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            color: #1d1a15;
+            background: #120f0b url('admin-dashboard-bg.jpg') center center / cover fixed no-repeat;
         }
 
-        .container {
-            max-width: 1400px;
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(10, 8, 6, 0.82), rgba(10, 8, 6, 0.45)),
+                linear-gradient(180deg, rgba(10, 8, 6, 0.26), rgba(10, 8, 6, 0.78));
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.25rem;
         }
 
-        header {
-            background: var(--dark);
-            color: var(--gold);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 2rem;
-        }
-
-        .logout-btn {
-            background: var(--danger);
+        .top {
+            background: var(--glass);
+            border: 1px solid rgba(244, 196, 48, 0.22);
+            border-radius: 18px;
             color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .logout-btn:hover {
-            background: #c82333;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--gold);
-        }
-
-        .stat-card h3 {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .stat-card .value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--gold);
-        }
-
-        .stat-card .change {
-            font-size: 0.85rem;
-            color: #999;
-            margin-top: 0.5rem;
-        }
-
-        /* Tabs */
-        .tabs {
+            padding: 1.2rem 1.35rem;
             display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e0e0e0;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 58px rgba(0, 0, 0, 0.32);
         }
 
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            color: #999;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            font-weight: 500;
+        .kicker {
+            color: rgba(244, 196, 48, 0.8);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin: 0 0 0.2rem;
         }
 
-        .tab-btn.active {
-            color: var(--gold);
-            border-bottom-color: var(--gold);
+        h1 {
+            margin: 0;
+            color: white;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(2rem, 5vw, 3.1rem);
+            line-height: 0.95;
         }
 
-        .tab-btn:hover {
-            color: var(--dark);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Charts */
-        .chart-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .chart-container h2 {
-            margin-bottom: 1.5rem;
-            color: var(--dark);
-        }
-
-        /* Table */
-        .table-container {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table thead {
-            background: #f5f5f5;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        table th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        table tr:hover {
-            background: #f9f9f9;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .status-completed {
-            background: rgba(40, 167, 69, 0.2);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ff9800;
-        }
-
-        .status-failed {
-            background: rgba(220, 53, 69, 0.2);
-            color: var(--danger);
-        }
-
-        /* Actions */
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+        .sub {
+            margin: 0.45rem 0 0;
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 700px;
         }
 
         .btn {
-            background: var(--gold);
-            color: var(--dark);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            border: 0;
+            border-radius: 999px;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font: inherit;
+            font-weight: 700;
+            padding: 0.68rem 1rem;
         }
 
-        .btn:hover {
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(244, 196, 48, 0.3);
+        .btn-primary {
+            background: var(--gold);
+            color: #332408;
         }
 
-        .btn.secondary {
-            background: #e0e0e0;
-            color: var(--dark);
+        .btn-ghost {
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.09);
+            color: white;
         }
 
-        .btn.secondary:hover {
-            background: #d0d0d0;
+        .summary {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.85rem;
         }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #999;
+        .card {
+            background: var(--paper);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+            padding: 1rem;
         }
 
-        /* Search */
-        .search-box {
-            display: flex;
+        .card h3 {
+            margin: 0;
+            color: #6f6758;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .card strong {
+            display: block;
+            margin-top: 0.45rem;
+            color: #8f6116;
+            font-size: 1.9rem;
+            line-height: 1.1;
+        }
+
+        .workspace {
+            margin-top: 1rem;
+            display: grid;
             gap: 1rem;
-            margin-bottom: 1rem;
         }
 
-        .search-box input {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--gold);
-        }
-
-        /* Pagination */
-        .pagination {
+        .hero-panel {
+            background:
+                radial-gradient(circle at top right, rgba(244, 196, 48, 0.2), transparent 40%),
+                linear-gradient(135deg, rgba(18, 15, 10, 0.92), rgba(42, 34, 18, 0.78));
+            border-radius: 20px;
+            border: 1px solid rgba(244, 196, 48, 0.22);
+            color: white;
+            padding: 1.4rem;
             display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 1.5rem;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .pagination button {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e0e0e0;
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+        .hero-panel h2 {
+            margin: 0;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(1.8rem, 4vw, 2.7rem);
+            line-height: 0.95;
         }
 
-        .pagination button.active {
-            background: var(--gold);
-            color: var(--dark);
-            border-color: var(--gold);
+        .hero-panel p {
+            margin: 0.45rem 0 0;
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 680px;
         }
 
-        .pagination button:hover:not(.active) {
-            background: #f5f5f5;
+        .status {
+            min-height: 1.2rem;
+            color: var(--success);
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.58);
+            border-radius: 10px;
+            padding: 0.55rem 0.75rem;
         }
 
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
+        .sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        .section {
+            background: var(--paper);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
 
-            .tabs {
-                flex-wrap: wrap;
-            }
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding: 1rem;
+            background: rgba(251, 249, 244, 0.86);
+            border-bottom: 1px solid #eee4ca;
+        }
 
-            .tab-btn {
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-            }
+        .section-head h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1.25rem;
+        }
 
-            table {
-                font-size: 0.85rem;
-            }
+        .section-head p {
+            margin: 0;
+            color: #6f6858;
+            font-size: 0.9rem;
+        }
 
-            table th, table td {
-                padding: 0.5rem;
-            }
+        .grid {
+            padding: 1rem;
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .entry {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ede4cf;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .entry-head {
+            padding: 0.8rem 0.9rem;
+            border-bottom: 1px solid #f0e7d2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .entry-head strong { font-size: 0.95rem; }
+        .entry-head small { color: #716a5b; }
+
+        .entry-body { padding: 0.9rem; }
+
+        .preview-banner {
+            min-height: 116px;
+            border-radius: 10px;
+            background: #1a1a1a center center / cover no-repeat;
+            margin-bottom: 0.8rem;
+        }
+
+        .preview-verse {
+            background: #1d1a16;
+            color: white;
+            border-left: 4px solid var(--gold);
+            border-radius: 10px;
+            padding: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .preview-verse blockquote {
+            margin: 0 0 0.5rem;
+            font-family: Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .preview-verse cite {
+            color: var(--gold);
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        label {
+            display: block;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: #5a5347;
+            margin-bottom: 0.75rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-top: 0.35rem;
+            border-radius: 9px;
+            border: 1px solid #d8d0bb;
+            padding: 0.65rem 0.7rem;
+            font: inherit;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.7rem;
+        }
+
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: #2f9d59;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .toggle input { width: auto; margin: 0; accent-color: #2f9d59; }
+
+        @media (max-width: 1024px) {
+            .summary { grid-template-columns: 1fr 1fr; }
+            .sections { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            .top { flex-direction: column; align-items: stretch; }
+            .summary { grid-template-columns: 1fr; }
+            .hero-panel { flex-direction: column; align-items: stretch; }
+            .row-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>💚 Donation Dashboard</h1>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="page">
+        <header class="top">
+            <div>
+                <p class="kicker">Destined for Greatness Ministries</p>
+                <h1>Admin Dashboard</h1>
+                <p class="sub">Manage homepage banners and featured Bible verses from one place.</p>
+            </div>
+            <button class="btn btn-ghost" type="button" onclick="logout()">Logout</button>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Donations</h3>
-                <div class="value" id="totalDonations">-</div>
-                <div class="change">All time</div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Amount Raised</h3>
-                <div class="value" id="totalAmount">-</div>
-                <div class="change">USD</div>
-            </div>
-            <div class="stat-card">
-                <h3>Average Donation</h3>
-                <div class="value" id="avgAmount">-</div>
-                <div class="change">Per donation</div>
-            </div>
-            <div class="stat-card">
-                <h3>Email Subscribers</h3>
-                <div class="value" id="totalSubscribers">-</div>
-                <div class="change">Active subscribers</div>
-            </div>
-        </div>
+        <section class="summary">
+            <article class="card">
+                <h3>Homepage Banners</h3>
+                <strong id="totalBanners">0</strong>
+            </article>
+            <article class="card">
+                <h3>Active Banners</h3>
+                <strong id="activeBanners">0</strong>
+            </article>
+            <article class="card">
+                <h3>Bible Verses</h3>
+                <strong id="totalVerses">0</strong>
+            </article>
+            <article class="card">
+                <h3>Featured Verse</h3>
+                <strong id="featuredVerse">None</strong>
+            </article>
+        </section>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
-            <button class="tab-btn" onclick="switchTab('donations')">All Donations</button>
-            <button class="tab-btn" onclick="switchTab('subscribers')">Subscribers</button>
-        </div>
-
-        <!-- Overview Tab -->
-        <div id="overview" class="tab-content active">
-            <div class="chart-container">
-                <h2>Monthly Donations</h2>
-                <canvas id="monthlyChart"></canvas>
-            </div>
-
-            <div class="chart-container">
-                <h2>Donations by Type</h2>
-                <canvas id="typeChart"></canvas>
-            </div>
-
-            <div class="actions">
-                <button class="btn" onclick="exportDonations()">📥 Export as CSV</button>
-            </div>
-        </div>
-
-        <!-- Donations Tab -->
-        <div id="donations" class="tab-content">
-            <div class="table-container">
-                <div class="search-box">
-                    <input type="text" id="donationSearch" placeholder="Search by name or email..." onkeyup="filterDonations()">
+        <section class="workspace">
+            <article class="hero-panel">
+                <div>
+                    <p class="kicker">Homepage Content</p>
+                    <h2>Banners & Bible Verses</h2>
+                    <p>Update the exact content visitors see in your hero section, then save once to publish.</p>
                 </div>
-                
-                <div class="loading" id="donationsLoading">Loading donations...</div>
-                <table id="donationsTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Amount</th>
-                            <th>Type</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="donationsBody">
-                    </tbody>
-                </table>
-            </div>
-            <div class="pagination" id="donationsPagination"></div>
-        </div>
+                <button class="btn btn-primary" type="button" onclick="saveContent()">Save Changes</button>
+            </article>
+            <div class="status" id="contentStatus"></div>
 
-        <!-- Subscribers Tab -->
-        <div id="subscribers" class="tab-content">
-            <div class="table-container">
-                <div class="search-box">
-                    <input type="text" id="subscriberSearch" placeholder="Search subscribers..." onkeyup="filterSubscribers()">
-                </div>
-                
-                <div class="loading" id="subscribersLoading">Loading subscribers...</div>
-                <table id="subscribersTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Joined Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="subscribersBody">
-                    </tbody>
-                </table>
+            <div class="sections">
+                <section class="section">
+                    <div class="section-head">
+                        <div>
+                            <h3>Bible Verses</h3>
+                            <p>Featured scripture for the homepage.</p>
+                        </div>
+                        <button class="btn btn-primary" type="button" onclick="addVerse()">Add Verse</button>
+                    </div>
+                    <div class="grid" id="verseEditor"></div>
+                </section>
+
+                <section class="section">
+                    <div class="section-head">
+                        <div>
+                            <h3>Banners</h3>
+                            <p>Slide images, titles, and button links.</p>
+                        </div>
+                        <button class="btn btn-primary" type="button" onclick="addBanner()">Add Banner</button>
+                    </div>
+                    <div class="grid" id="bannerEditor"></div>
+                </section>
             </div>
-        </div>
+        </section>
     </div>
 
     <script>
-        let allDonations = [];
-        let allSubscribers = [];
-        let currentPage = 1;
-        const itemsPerPage = 10;
+        let siteContent = { banners: [], verses: [] };
+        const isFileMode = window.location.protocol === 'file:';
+        const localContentKey = 'dfg_admin_local_content_v1';
 
-        // Check authentication
+        checkAuth();
+        loadContent();
+
         function checkAuth() {
-            // TODO: Implement authentication check
-            // If not authenticated, redirect to login page
-        }
-
-        // Load data on page load
-        window.addEventListener('load', () => {
-            loadStats();
-            loadDonations();
-            loadSubscribers();
-            loadMonthlyChart();
-            loadTypeChart();
-        });
-
-        // Load statistics
-        async function loadStats() {
-            try {
-                const response = await fetch('/api/admin/stats');
-                const data = await response.json();
-
-                document.getElementById('totalDonations').textContent = data.totalDonations || '0';
-                document.getElementById('totalAmount').textContent = '$' + (data.totalAmount || 0).toFixed(2);
-                document.getElementById('avgAmount').textContent = '$' + (data.averageAmount || 0).toFixed(2);
-
-                // Load subscribers count
-                const subResponse = await fetch('/api/admin/subscribers');
-                const subs = await subResponse.json();
-                document.getElementById('totalSubscribers').textContent = subs.length;
-            } catch (error) {
-                console.error('Error loading stats:', error);
+            const auth = localStorage.getItem('dfg_admin_auth');
+            if (auth !== 'true') {
+                window.location.href = '/admin-login.html';
             }
         }
 
-        // Load donations
-        async function loadDonations() {
+        async function loadContent() {
             try {
-                const response = await fetch('/api/admin/donations');
-                allDonations = await response.json();
-                displayDonations();
-                document.getElementById('donationsLoading').style.display = 'none';
-                document.getElementById('donationsTable').style.display = 'table';
+                if (isFileMode) {
+                    loadContentFromLocal();
+                    updateSummary();
+                    renderContentEditor();
+                    setStatus('Local preview mode. Changes are stored in this browser only.');
+                    return;
+                }
+
+                const response = await fetch('/api/admin/content');
+                siteContent = await response.json();
+                updateSummary();
+                renderContentEditor();
+                setStatus('Ready to edit and publish.');
             } catch (error) {
-                console.error('Error loading donations:', error);
-                document.getElementById('donationsLoading').textContent = 'Error loading donations';
+                console.error('Error loading site content:', error);
+                setStatus('Could not load content.', true);
             }
         }
 
-        // Display donations
-        function displayDonations() {
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginated = allDonations.slice(start, end);
+        function updateSummary() {
+            const banners = siteContent.banners || [];
+            const verses = siteContent.verses || [];
+            const activeVerse = verses.find(verse => verse.active) || verses[0];
 
-            const tbody = document.getElementById('donationsBody');
-            tbody.innerHTML = '';
+            document.getElementById('totalBanners').textContent = banners.length;
+            document.getElementById('activeBanners').textContent = banners.filter(item => item.active).length;
+            document.getElementById('totalVerses').textContent = verses.length;
+            document.getElementById('featuredVerse').textContent = activeVerse ? activeVerse.reference : 'None';
+        }
 
-            paginated.forEach(donation => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${donation.first_name} ${donation.last_name}</td>
-                    <td>${donation.email}</td>
-                    <td>$${donation.amount.toFixed(2)}</td>
-                    <td>${donation.donation_type || 'General'}</td>
-                    <td>${new Date(donation.created_at).toLocaleDateString()}</td>
-                    <td><span class="status-badge status-${donation.status}">${donation.status}</span></td>
-                `;
+        function renderContentEditor() {
+            const bannerEditor = document.getElementById('bannerEditor');
+            const verseEditor = document.getElementById('verseEditor');
+
+            bannerEditor.innerHTML = siteContent.banners.map((banner, index) => `
+                <article class="entry">
+                    <header class="entry-head">
+                        <div>
+                            <strong>Banner ${index + 1}</strong><br />
+                            <small>${escapeHtml(banner.title || 'Untitled banner')}</small>
+                        </div>
+                        <label class="toggle"><input type="checkbox" ${banner.active ? 'checked' : ''} onchange="updateBanner(${index}, 'active', this.checked)"> Active</label>
+                    </header>
+                    <div class="entry-body">
+                        <div class="preview-banner" style="background-image:url('${escapeHtml(banner.imageUrl || '')}')"></div>
+                        <label>Image URL or file path<input value="${escapeHtml(banner.imageUrl || '')}" oninput="updateBanner(${index}, 'imageUrl', this.value)"></label>
+                        <label>Banner headline<input value="${escapeHtml(banner.title || '')}" oninput="updateBanner(${index}, 'title', this.value)"></label>
+                        <label>Small subtitle<input value="${escapeHtml(banner.subtitle || '')}" oninput="updateBanner(${index}, 'subtitle', this.value)"></label>
+                        <div class="row-2">
+                            <label>Primary button text<input value="${escapeHtml(banner.primaryLabel || '')}" oninput="updateBanner(${index}, 'primaryLabel', this.value)"></label>
+                            <label>Primary button link<input value="${escapeHtml(banner.primaryUrl || '')}" oninput="updateBanner(${index}, 'primaryUrl', this.value)"></label>
+                        </div>
+                        <div class="row-2">
+                            <label>Secondary button text<input value="${escapeHtml(banner.secondaryLabel || '')}" oninput="updateBanner(${index}, 'secondaryLabel', this.value)"></label>
+                            <label>Secondary button link<input value="${escapeHtml(banner.secondaryUrl || '')}" oninput="updateBanner(${index}, 'secondaryUrl', this.value)"></label>
+                        </div>
+                        <button class="btn btn-ghost" type="button" onclick="removeBanner(${index})">Remove Banner</button>
+                    </div>
+                </article>
+            `).join('');
+
+            verseEditor.innerHTML = siteContent.verses.map((verse, index) => `
+                <article class="entry">
+                    <header class="entry-head">
+                        <div>
+                            <strong>Bible Verse ${index + 1}</strong><br />
+                            <small>${escapeHtml(verse.reference || 'No reference')}</small>
+                        </div>
+                        <label class="toggle"><input type="checkbox" ${verse.active ? 'checked' : ''} onchange="updateVerse(${index}, 'active', this.checked)"> Active</label>
+                    </header>
+                    <div class="entry-body">
+                        <div class="preview-verse">
+                            <blockquote>${escapeHtml(verse.text || 'Verse text preview.')}</blockquote>
+                            <cite>${escapeHtml(verse.reference || 'Reference')}</cite>
+                        </div>
+                        <label>Scripture reference<input value="${escapeHtml(verse.reference || '')}" oninput="updateVerse(${index}, 'reference', this.value)"></label>
+                        <label>Verse text<textarea oninput="updateVerse(${index}, 'text', this.value)">${escapeHtml(verse.text || '')}</textarea></label>
+                        <button class="btn btn-ghost" type="button" onclick="removeVerse(${index})">Remove Verse</button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function addBanner() {
+            siteContent.banners.push({
+                active: true,
+                imageUrl: 'banner.jpg',
+                title: 'Destined for Greatness',
+                subtitle: 'Messianic Ministries',
+                primaryLabel: 'Explore Our Work',
+                primaryUrl: '#ministries',
+                secondaryLabel: 'Make a Donation',
+                secondaryUrl: '#donate'
             });
-
-            // Pagination
-            const totalPages = Math.ceil(allDonations.length / itemsPerPage);
-            const paginationDiv = document.getElementById('donationsPagination');
-            paginationDiv.innerHTML = '';
-
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = i === currentPage ? 'active' : '';
-                btn.onclick = () => {
-                    currentPage = i;
-                    displayDonations();
-                    window.scrollTo(0, 0);
-                };
-                paginationDiv.appendChild(btn);
-            }
+            updateSummary();
+            renderContentEditor();
         }
 
-        // Filter donations
-        function filterDonations() {
-            const searchTerm = document.getElementById('donationSearch').value.toLowerCase();
-            allDonations = allDonations.filter(d => 
-                d.first_name.toLowerCase().includes(searchTerm) ||
-                d.last_name.toLowerCase().includes(searchTerm) ||
-                d.email.toLowerCase().includes(searchTerm)
-            );
-            currentPage = 1;
-            displayDonations();
-        }
-
-        // Load subscribers
-        async function loadSubscribers() {
-            try {
-                const response = await fetch('/api/admin/subscribers');
-                allSubscribers = await response.json();
-                displaySubscribers();
-                document.getElementById('subscribersLoading').style.display = 'none';
-                document.getElementById('subscribersTable').style.display = 'table';
-            } catch (error) {
-                console.error('Error loading subscribers:', error);
-            }
-        }
-
-        // Display subscribers
-        function displaySubscribers() {
-            const tbody = document.getElementById('subscribersBody');
-            tbody.innerHTML = '';
-
-            allSubscribers.forEach(sub => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${sub.name || 'N/A'}</td>
-                    <td>${sub.email}</td>
-                    <td>${new Date(sub.created_at).toLocaleDateString()}</td>
-                `;
+        function addVerse() {
+            siteContent.verses.push({
+                active: true,
+                reference: 'Ephesians 2:10',
+                text: "For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do."
             });
+            updateSummary();
+            renderContentEditor();
         }
 
-        // Filter subscribers
-        function filterSubscribers() {
-            const searchTerm = document.getElementById('subscriberSearch').value.toLowerCase();
-            const filtered = allSubscribers.filter(s => 
-                s.email.toLowerCase().includes(searchTerm) ||
-                (s.name && s.name.toLowerCase().includes(searchTerm))
-            );
-            displaySubscribers();
+        function updateBanner(index, field, value) {
+            siteContent.banners[index][field] = value;
+            updateSummary();
         }
 
-        // Load monthly chart
-        async function loadMonthlyChart() {
+        function updateVerse(index, field, value) {
+            siteContent.verses[index][field] = value;
+            updateSummary();
+        }
+
+        function removeBanner(index) {
+            siteContent.banners.splice(index, 1);
+            updateSummary();
+            renderContentEditor();
+        }
+
+        function removeVerse(index) {
+            siteContent.verses.splice(index, 1);
+            updateSummary();
+            renderContentEditor();
+        }
+
+        async function saveContent() {
             try {
-                const response = await fetch('/api/admin/monthly-donations');
-                const data = await response.json();
+                if (isFileMode) {
+                    localStorage.setItem(localContentKey, JSON.stringify(siteContent));
+                    setStatus('Saved locally for file preview mode.');
+                    return;
+                }
 
-                const ctx = document.getElementById('monthlyChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.map(d => d.month).reverse(),
-                        datasets: [{
-                            label: 'Amount Donated',
-                            data: data.map(d => d.total).reverse(),
-                            borderColor: '#F4C430',
-                            backgroundColor: 'rgba(244, 196, 48, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: true
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return '$' + value;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                const response = await fetch('/api/admin/content', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(siteContent)
                 });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.error || 'Save failed');
+                siteContent = result.content;
+                updateSummary();
+                renderContentEditor();
+                setStatus('Content saved successfully.');
             } catch (error) {
-                console.error('Error loading monthly chart:', error);
+                console.error('Error saving content:', error);
+                setStatus('Could not save content.', true);
             }
         }
 
-        // Load type chart
-        async function loadTypeChart() {
-            try {
-                const response = await fetch('/api/admin/donations-by-type');
-                const data = await response.json();
-
-                const ctx = document.getElementById('typeChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: data.map(d => d.donation_type || 'General'),
-                        datasets: [{
-                            data: data.map(d => d.total),
-                            backgroundColor: [
-                                '#F4C430',
-                                '#28a745',
-                                '#007bff',
-                                '#ffc107',
-                                '#dc3545'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error loading type chart:', error);
-            }
+        function setStatus(message, isError) {
+            const status = document.getElementById('contentStatus');
+            status.textContent = message;
+            status.style.color = isError ? 'var(--danger)' : 'var(--success)';
         }
 
-        // Switch tabs
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Export donations as CSV
-        async function exportDonations() {
-            try {
-                const response = await fetch('/api/admin/export-donations');
-                const csv = await response.text();
-
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `donations-${new Date().toISOString().split('T')[0]}.csv`;
-                a.click();
-            } catch (error) {
-                console.error('Error exporting:', error);
-                alert('Error exporting donations');
-            }
-        }
-
-        // Logout
         function logout() {
-            // TODO: Implement logout
-            alert('Logout functionality to be implemented');
+            localStorage.removeItem('dfg_admin_auth');
+            window.location.href = isFileMode ? './admin-login.html' : '/admin-login.html';
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[char]);
+        }
+
+        function loadContentFromLocal() {
+            const stored = localStorage.getItem(localContentKey);
+            if (stored) {
+                try {
+                    siteContent = JSON.parse(stored);
+                    return;
+                } catch {
+                    // Fall back to defaults below.
+                }
+            }
+
+            siteContent = {
+                banners: [
+                    {
+                        active: true,
+                        imageUrl: 'banner.jpg',
+                        title: 'Destined for Greatness',
+                        subtitle: 'Messianic Ministries',
+                        primaryLabel: 'Explore Our Work',
+                        primaryUrl: '#ministries',
+                        secondaryLabel: 'Make a Donation',
+                        secondaryUrl: '#donate'
+                    }
+                ],
+                verses: [
+                    {
+                        active: true,
+                        reference: 'Ephesians 2:10',
+                        text: "For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do."
+                    }
+                ]
+            };
         }
     </script>
 </body>

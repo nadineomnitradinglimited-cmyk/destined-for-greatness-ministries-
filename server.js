@@ -49,9 +49,34 @@ db.exec(`
         name TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS site_banners (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        active BOOLEAN DEFAULT 1,
+        image_url TEXT NOT NULL,
+        title TEXT NOT NULL,
+        subtitle TEXT,
+        primary_label TEXT,
+        primary_url TEXT,
+        secondary_label TEXT,
+        secondary_url TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS bible_verses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        active BOOLEAN DEFAULT 1,
+        reference TEXT NOT NULL,
+        verse_text TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 `);
 
 console.log('Connected to SQLite database');
+
+seedContentTables();
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -184,6 +209,89 @@ app.get('/api/admin/subscribers', (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+app.post('/api/admin/login', (req, res) => {
+    try {
+        const username = String(req.body.username || '').trim();
+        const password = String(req.body.password || '');
+        const expectedUser = process.env.ADMIN_USERNAME || 'admin';
+        const expectedPass = process.env.ADMIN_PASSWORD || 'admin123';
+
+        if (username === expectedUser && password === expectedPass) {
+            return res.json({ success: true });
+        }
+
+        res.status(401).json({ success: false, message: 'Invalid username or password.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Login error.' });
+    }
+});
+
+app.get('/api/content', (req, res) => {
+    try {
+        res.json(getSiteContent(true));
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/admin/content', (req, res) => {
+    try {
+        res.json(getSiteContent(false));
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/admin/content', (req, res) => {
+    try {
+        const banners = Array.isArray(req.body.banners) ? req.body.banners : [];
+        const verses = Array.isArray(req.body.verses) ? req.body.verses : [];
+
+        const save = db.transaction(() => {
+            db.prepare('DELETE FROM site_banners').run();
+            db.prepare('DELETE FROM bible_verses').run();
+
+            const insertBanner = db.prepare(`
+                INSERT INTO site_banners
+                (sort_order, active, image_url, title, subtitle, primary_label, primary_url, secondary_label, secondary_url)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `);
+
+            banners.forEach((banner, index) => {
+                const imageUrl = String(banner.imageUrl || banner.image_url || '').trim();
+                const title = String(banner.title || '').trim();
+                if (!imageUrl || !title) return;
+
+                insertBanner.run(
+                    index,
+                    banner.active ? 1 : 0,
+                    imageUrl,
+                    title,
+                    String(banner.subtitle || '').trim(),
+                    String(banner.primaryLabel || banner.primary_label || '').trim(),
+                    String(banner.primaryUrl || banner.primary_url || '').trim(),
+                    String(banner.secondaryLabel || banner.secondary_label || '').trim(),
+                    String(banner.secondaryUrl || banner.secondary_url || '').trim()
+                );
+            });
+
+            const insertVerse = db.prepare(`
+                INSERT INTO bible_verses (sort_order, active, reference, verse_text)
+                VALUES (?, ?, ?, ?)
+            `);
+
+            verses.forEach((verse, index) => {
+                const reference = String(verse.reference || '').trim();
+                const text = String(verse.text || verse.verse_text || '').trim();
+                if (!reference || !text) return;
+
+                insertVerse.run(index, verse.active ? 1 : 0, reference, text);
+            });
+
+            seedContentTables();
+        });
+
+        save();
+        res.json({ success: true, content: getSiteContent(false) });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
 app.get('/api/admin/export-donations', (req, res) => {
     try {
         const rows = db.prepare('SELECT * FROM donations ORDER BY created_at DESC').all();
@@ -230,3 +338,86 @@ app.listen(PORT, () => {
 });
 
 process.on('SIGTERM', () => { db.close(); process.exit(0); });
+
+function seedContentTables() {
+    const bannerCount = db.prepare('SELECT COUNT(*) as count FROM site_banners').get().count;
+    if (!bannerCount) {
+        const insertBanner = db.prepare(`
+            INSERT INTO site_banners
+            (sort_order, active, image_url, title, subtitle, primary_label, primary_url, secondary_label, secondary_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        insertBanner.run(
+            0,
+            1,
+            'banner.jpg',
+            'Destined for Greatness',
+            'Messianic Ministries',
+            'Explore Our Work',
+            '#ministries',
+            'Make a Donation',
+            '#donate'
+        );
+        insertBanner.run(
+            1,
+            1,
+            'banner2.jpg',
+            'Destined for Greatness',
+            'Messianic Ministries',
+            'Explore Our Work',
+            '#ministries',
+            'Make a Donation',
+            '#donate'
+        );
+    }
+
+    const verseCount = db.prepare('SELECT COUNT(*) as count FROM bible_verses').get().count;
+    if (!verseCount) {
+        db.prepare(`
+            INSERT INTO bible_verses (sort_order, active, reference, verse_text)
+            VALUES (?, ?, ?, ?)
+        `).run(
+            0,
+            1,
+            'Ephesians 2:10',
+            "For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do."
+        );
+    }
+}
+
+function getSiteContent(activeOnly) {
+    const bannerWhere = activeOnly ? 'WHERE active = 1' : '';
+    const verseWhere = activeOnly ? 'WHERE active = 1' : '';
+
+    const banners = db.prepare(`
+        SELECT
+            id,
+            sort_order as sortOrder,
+            active,
+            image_url as imageUrl,
+            title,
+            subtitle,
+            primary_label as primaryLabel,
+            primary_url as primaryUrl,
+            secondary_label as secondaryLabel,
+            secondary_url as secondaryUrl
+        FROM site_banners
+        ${bannerWhere}
+        ORDER BY sort_order ASC, id ASC
+    `).all().map(row => ({ ...row, active: Boolean(row.active) }));
+
+    const verses = db.prepare(`
+        SELECT
+            id,
+            sort_order as sortOrder,
+            active,
+            reference,
+            verse_text as text
+        FROM bible_verses
+        ${verseWhere}
+        ORDER BY sort_order ASC, id ASC
+    `).all().map(row => ({ ...row, active: Boolean(row.active) }));
+
+    return { banners, verses };
+}
