@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Destined for Greatness</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap');
+
+        :root {
+            --gold: #f4c430;
+            --glass: rgba(21, 16, 11, 0.74);
+            --danger: #c54e4e;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: 'Manrope', 'Segoe UI', sans-serif;
+            background: #120f0b url('admin-dashboard-bg.jpg') center center / cover fixed no-repeat;
+            color: white;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(8, 6, 4, 0.82), rgba(8, 6, 4, 0.55));
+            z-index: 0;
+        }
+
+        .login {
+            position: relative;
+            z-index: 1;
+            width: min(460px, calc(100vw - 2rem));
+            background: var(--glass);
+            border: 1px solid rgba(244, 196, 48, 0.24);
+            border-radius: 18px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4);
+            padding: 1.35rem;
+        }
+
+        .kicker {
+            margin: 0;
+            color: rgba(244, 196, 48, 0.84);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 0.25rem 0 0.55rem;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2.1rem;
+            line-height: 0.95;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.86);
+        }
+
+        input {
+            width: 100%;
+            margin-top: 0.35rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            padding: 0.72rem 0.8rem;
+            font: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(244, 196, 48, 0.2);
+        }
+
+        button {
+            width: 100%;
+            border: 0;
+            border-radius: 999px;
+            background: var(--gold);
+            color: #2d2007;
+            font: inherit;
+            font-weight: 800;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+        }
+
+        .status {
+            min-height: 1.1rem;
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: #9be0b3;
+        }
+
+        .status.error { color: var(--danger); }
+    </style>
+</head>
+<body>
+    <section class="login">
+        <p class="kicker">Destined for Greatness Ministries</p>
+        <h1>Admin Login</h1>
+        <p>Sign in to manage homepage banners and Bible verses.</p>
+        <form id="loginForm">
+            <label>
+                Username
+                <input id="username" type="text" required autocomplete="username">
+            </label>
+            <label>
+                Password
+                <input id="password" type="password" required autocomplete="current-password">
+            </label>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="status" id="status"></div>
+    </section>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const statusEl = document.getElementById('status');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            statusEl.className = 'status';
+            statusEl.textContent = 'Signing in...';
+
+            try {
+                if (window.location.protocol === 'file:') {
+                    const user = document.getElementById('username').value.trim();
+                    const pass = document.getElementById('password').value;
+                    if (user === 'admin' && pass === 'admin123') {
+                        localStorage.setItem('dfg_admin_auth', 'true');
+                        window.location.href = './admin-dashboard.html';
+                        return;
+                    }
+                    throw new Error('Invalid username or password.');
+                }
+
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value.trim(),
+                        password: document.getElementById('password').value
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.message || 'Login failed');
+
+                localStorage.setItem('dfg_admin_auth', 'true');
+                window.location.href = '/admin-dashboard.html';
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html>

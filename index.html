@@ -1109,6 +1109,7 @@
             <li><a href="school.html">School</a></li>
             <li><a href="#donate">Donate</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="admin-login.html">Admin Login</a></li>
             <li><a href="#donate" class="nav-donate">Give Now</a></li>
         </ul>
         <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
@@ -1118,21 +1119,23 @@
 
     <!-- ══ HERO ══ -->
     <section id="home">
-        <div class="banner-slide active" style="background-image:url('banner.jpg')"></div>
-        <div class="banner-slide" style="background-image:url('banner2.jpg')"></div>
+        <div id="bannerSlides">
+            <div class="banner-slide active" style="background-image:url('banner.jpg')" data-title="Destined for Greatness" data-subtitle="Messianic Ministries"></div>
+            <div class="banner-slide" style="background-image:url('banner2.jpg')" data-title="Destined for Greatness" data-subtitle="Messianic Ministries"></div>
+        </div>
         <div class="particles" id="particles"></div>
-        <div class="banner-dots">
+        <div class="banner-dots" id="bannerDots">
             <div class="banner-dot active" onclick="goToSlide(0)"></div>
             <div class="banner-dot" onclick="goToSlide(1)"></div>
         </div>
         <div class="hero-inner">
             <div class="hero-badge">✦ Messianic Ministries</div>
-            <h1 class="hero-title">Destined for <span>Greatness</span></h1>
-            <p class="hero-sub">Messianic Ministries</p>
-            <p class="hero-quote">"For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do." — Ephesians 2:10</p>
+            <h1 class="hero-title" id="heroTitle">Destined for <span>Greatness</span></h1>
+            <p class="hero-sub" id="heroSubtitle">Messianic Ministries</p>
+            <p class="hero-quote" id="heroVerse">"For we are God's handiwork, created in Messiah Yeshua to do good works, which God prepared in advance for us to do." — Ephesians 2:10</p>
             <div class="hero-btns">
-                <a href="#ministries" class="btn btn-outline">Explore Our Work</a>
-                <a href="#donate" class="btn btn-green">Make a Donation</a>
+                <a href="#ministries" class="btn btn-outline" id="heroPrimaryButton">Explore Our Work</a>
+                <a href="#donate" class="btn btn-green" id="heroSecondaryButton">Make a Donation</a>
             </div>
         </div>
         <div class="scroll-hint"><span>Scroll</span><div class="arrow"></div></div>
@@ -1522,18 +1525,99 @@
     <script>
         // Banner slideshow
         let currentSlide = 0;
-        const slides = document.querySelectorAll('.banner-slide');
-        const dots = document.querySelectorAll('.banner-dot');
+        let slides = document.querySelectorAll('.banner-slide');
+        let dots = document.querySelectorAll('.banner-dot');
+        let slideTimer;
 
         function goToSlide(n) {
+            if (!slides.length || !dots.length) return;
             slides[currentSlide].classList.remove('active');
             dots[currentSlide].classList.remove('active');
             currentSlide = n;
             slides[currentSlide].classList.add('active');
             dots[currentSlide].classList.add('active');
+            updateHeroCopy(slides[currentSlide]);
         }
 
-        setInterval(() => goToSlide((currentSlide + 1) % slides.length), 5000);
+        function startBannerTimer() {
+            if (slideTimer) clearInterval(slideTimer);
+            if (slides.length > 1) {
+                slideTimer = setInterval(() => goToSlide((currentSlide + 1) % slides.length), 5000);
+            }
+        }
+
+        function updateHeroCopy(slide) {
+            if (!slide) return;
+            document.getElementById('heroTitle').textContent = slide.dataset.title || 'Destined for Greatness';
+            document.getElementById('heroSubtitle').textContent = slide.dataset.subtitle || 'Messianic Ministries';
+            setButton('heroPrimaryButton', slide.dataset.primaryLabel, slide.dataset.primaryUrl);
+            setButton('heroSecondaryButton', slide.dataset.secondaryLabel, slide.dataset.secondaryUrl);
+        }
+
+        function setButton(id, label, url) {
+            const button = document.getElementById(id);
+            if (!button) return;
+            button.textContent = label || (id === 'heroPrimaryButton' ? 'Explore Our Work' : 'Make a Donation');
+            button.href = url || (id === 'heroPrimaryButton' ? '#ministries' : '#donate');
+            button.style.display = label === '' ? 'none' : 'inline-flex';
+        }
+
+        async function loadHomepageContent() {
+            try {
+                const response = await fetch('/api/content', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Content request failed');
+                const content = await response.json();
+                renderHomepageBanners(content.banners || []);
+                renderHomepageVerse((content.verses || [])[0]);
+            } catch (error) {
+                console.warn('Using default homepage content:', error.message);
+                updateHeroCopy(slides[currentSlide]);
+            }
+            startBannerTimer();
+        }
+
+        function renderHomepageBanners(banners) {
+            if (!banners.length) return;
+
+            const slideWrap = document.getElementById('bannerSlides');
+            const dotWrap = document.getElementById('bannerDots');
+            slideWrap.innerHTML = banners.map((banner, index) => `
+                <div
+                    class="banner-slide ${index === 0 ? 'active' : ''}"
+                    style="background-image:url('${escapeAttribute(banner.imageUrl)}')"
+                    data-title="${escapeAttribute(banner.title)}"
+                    data-subtitle="${escapeAttribute(banner.subtitle || '')}"
+                    data-primary-label="${escapeAttribute(banner.primaryLabel || '')}"
+                    data-primary-url="${escapeAttribute(banner.primaryUrl || '')}"
+                    data-secondary-label="${escapeAttribute(banner.secondaryLabel || '')}"
+                    data-secondary-url="${escapeAttribute(banner.secondaryUrl || '')}">
+                </div>
+            `).join('');
+            dotWrap.innerHTML = banners.map((_, index) => `
+                <div class="banner-dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>
+            `).join('');
+            slides = document.querySelectorAll('.banner-slide');
+            dots = document.querySelectorAll('.banner-dot');
+            currentSlide = 0;
+            updateHeroCopy(slides[0]);
+        }
+
+        function renderHomepageVerse(verse) {
+            if (!verse) return;
+            document.getElementById('heroVerse').textContent = `"${verse.text}" — ${verse.reference}`;
+        }
+
+        function escapeAttribute(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[char]);
+        }
+
+        loadHomepageContent();
 
         // Nav scroll effect
         window.addEventListener('scroll', () => {
