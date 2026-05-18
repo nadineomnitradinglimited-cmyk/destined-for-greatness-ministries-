@@ -11,17 +11,17 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-        --gold: #F4C430;
-        --gold-light: #fde98a;
-        --gold-dim: rgba(244,196,48,0.12);
-        --dark: #0a0807;
-        --panel: rgba(13, 10, 7, 0.82);
-        --panel-light: rgba(22, 17, 11, 0.85);
-        --border: rgba(244,196,48,0.14);
+        --gold: #F2B705;
+        --gold-light: #FFD93D;
+        --gold-dim: rgba(242,183,5,0.12);
+        --dark: #0d1a0f;
+        --panel: rgba(13, 26, 15, 0.88);
+        --panel-light: rgba(17, 30, 19, 0.90);
+        --border: rgba(242,183,5,0.16);
         --border-soft: rgba(255,255,255,0.07);
         --text: rgba(255,255,255,0.85);
         --muted: rgba(255,255,255,0.4);
-        --success: #52b788;
+        --success: #5ab870;
         --danger: #e05c5c;
         --warning: #f59e0b;
         --radius: 16px;
@@ -44,7 +44,7 @@
         content: '';
         position: fixed;
         inset: 0;
-        background: linear-gradient(145deg, rgba(5,3,2,0.91) 0%, rgba(10,7,4,0.75) 50%, rgba(5,3,2,0.92) 100%);
+        background: linear-gradient(145deg, rgba(5,12,6,0.93) 0%, rgba(10,18,11,0.78) 50%, rgba(5,12,6,0.94) 100%);
         z-index: 0;
     }
 
@@ -705,6 +705,122 @@
     @media (max-width: 400px) {
         .stats-grid { grid-template-columns: 1fr; }
     }
+
+    /* ══ LESSONS ══ */
+    .field-label {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+    }
+
+    .upload-zone {
+        border: 2px dashed rgba(244,196,48,0.25);
+        border-radius: 14px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        background: rgba(255,255,255,0.02);
+        user-select: none;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+        border-color: rgba(244,196,48,0.6);
+        background: rgba(244,196,48,0.05);
+    }
+
+    .upload-zone.has-file {
+        border-color: rgba(82,183,136,0.5);
+        background: rgba(82,183,136,0.06);
+    }
+
+    .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    .upload-text {
+        font-size: 0.86rem;
+        color: rgba(255,255,255,0.6);
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .upload-sub {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 300;
+    }
+
+    .lesson-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 0.85rem;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 1.25rem;
+        align-items: center;
+        transition: background 0.2s;
+    }
+
+    .lesson-card:hover { background: rgba(255,255,255,0.05); }
+
+    .lesson-thumb {
+        width: 52px; height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .lesson-thumb.audio { background: rgba(244,196,48,0.12); border: 1px solid rgba(244,196,48,0.2); }
+    .lesson-thumb.pdf   { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.2); }
+    .lesson-thumb.both  { background: rgba(82,183,136,0.12); border: 1px solid rgba(82,183,136,0.2); }
+
+    .lesson-info { min-width: 0; }
+
+    .lesson-title-text {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.88);
+        margin-bottom: 0.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .lesson-meta {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-weight: 300;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .lesson-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.85rem;
+        font-size: 0.78rem;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+        .lesson-card { grid-template-columns: auto 1fr; }
+        .lesson-actions { grid-column: 1/-1; justify-content: flex-end; }
+        #lessonsList { padding: 0.75rem; }
+    }
     </style>
 </head>
 <body>
@@ -732,6 +848,9 @@
             </button>
             <button class="nav-item" onclick="switchTab('content', this)">
                 <span class="icon">🖼️</span> Content Manager
+            </button>
+            <button class="nav-item" onclick="switchTab('lessons', this)">
+                <span class="icon">🎓</span> Lessons
             </button>
 
             <span class="nav-section-label">Tools</span>
@@ -820,6 +939,9 @@
             </button>
             <button class="tab-btn" id="tab-content" onclick="switchTab('content', this)">
                 🖼️ <span>Content</span>
+            </button>
+            <button class="tab-btn" id="tab-lessons" onclick="switchTab('lessons', this)">
+                🎓 <span>Lessons</span>
             </button>
         </div>
 
@@ -971,6 +1093,92 @@
                     <div id="verseStatus" style="font-size:0.82rem;margin-top:0.75rem;color:var(--success);"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- ── LESSONS TAB ── -->
+        <div id="lessons" class="tab-content">
+
+            <!-- Upload New Lesson -->
+            <div class="panel" style="margin-bottom:1.5rem;">
+                <div class="panel-header">
+                    <span class="panel-title">📤 Upload New Lesson</span>
+                </div>
+                <div class="panel-body">
+                    <p style="font-size:0.84rem;color:var(--muted);margin-bottom:1.5rem;font-weight:300;">Upload MP3 audio lessons or PDF study materials. Files are stored in the browser for demo purposes.</p>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+                        <div>
+                            <label class="field-label">Lesson Title *</label>
+                            <input class="search-input" style="width:100%;" id="lessonTitle" placeholder="e.g. Faith & Purpose – Part 1">
+                        </div>
+                        <div>
+                            <label class="field-label">Category</label>
+                            <select class="search-input" style="width:100%;" id="lessonCategory">
+                                <option value="Teaching">Teaching</option>
+                                <option value="Worship">Worship</option>
+                                <option value="Study">Bible Study</option>
+                                <option value="Sermon">Sermon</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Description (optional)</label>
+                        <textarea class="search-input" id="lessonDesc" style="width:100%;min-height:70px;resize:vertical;line-height:1.5;" placeholder="Brief description of this lesson…"></textarea>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.25rem;">
+                        <!-- MP3 Drop Zone -->
+                        <div class="upload-zone" id="mp3Zone" onclick="document.getElementById('mp3Input').click()" ondragover="handleDragOver(event,'mp3Zone')" ondragleave="handleDragLeave('mp3Zone')" ondrop="handleDrop(event,'mp3')">
+                            <input type="file" id="mp3Input" accept=".mp3,audio/mpeg" style="display:none;" onchange="handleFileSelect(event,'mp3')">
+                            <div class="upload-icon">🎵</div>
+                            <div class="upload-text" id="mp3Label">Drop MP3 here or click to browse</div>
+                            <div class="upload-sub">MP3 audio files only</div>
+                        </div>
+
+                        <!-- PDF Drop Zone -->
+                        <div class="upload-zone" id="pdfZone" onclick="document.getElementById('pdfInput').click()" ondragover="handleDragOver(event,'pdfZone')" ondragleave="handleDragLeave('pdfZone')" ondrop="handleDrop(event,'pdf')">
+                            <input type="file" id="pdfInput" accept=".pdf,application/pdf" style="display:none;" onchange="handleFileSelect(event,'pdf')">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text" id="pdfLabel">Drop PDF here or click to browse</div>
+                            <div class="upload-sub">PDF documents only</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                        <button class="btn btn-gold" onclick="uploadLesson()">📤 Upload Lesson</button>
+                        <button class="btn btn-ghost" onclick="clearLessonForm()">✕ Clear</button>
+                        <span id="lessonUploadStatus" style="font-size:0.82rem;color:var(--success);"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lessons Library -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">📚 Lessons Library</span>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <input class="search-input" type="text" id="lessonSearch" placeholder="🔍 Search lessons…" oninput="filterLessons()" style="min-width:180px;flex:unset;">
+                        <select class="search-input" id="lessonCatFilter" style="max-width:150px;" onchange="filterLessons()">
+                            <option value="">All Categories</option>
+                            <option value="Teaching">Teaching</option>
+                            <option value="Worship">Worship</option>
+                            <option value="Study">Bible Study</option>
+                            <option value="Sermon">Sermon</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding:0;">
+                    <div id="lessonsEmpty" style="display:none;" class="empty-state">
+                        <div class="icon">🎓</div>
+                        <p>No lessons uploaded yet. Use the form above to add your first lesson.</p>
+                    </div>
+                    <div id="lessonsList" style="padding:1.25rem;"></div>
+                </div>
+            </div>
+
         </div>
 
     </main>
@@ -1371,10 +1579,11 @@
 
     // ── TABS ──
     const TAB_TITLES = {
-        overview: ['Overview', 'Donation analytics & insights'],
-        donations: ['All Donations', 'Full transaction history'],
-        subscribers: ['Subscribers', 'Email list management'],
-        content: ['Content Manager', 'Banners & Bible verses'],
+        overview:    ['Overview',         'Donation analytics & insights'],
+        donations:   ['All Donations',    'Full transaction history'],
+        subscribers: ['Subscribers',      'Email list management'],
+        content:     ['Content Manager',  'Banners & Bible verses'],
+        lessons:     ['Lessons',          'MP3 audio & PDF study materials'],
     };
 
     function switchTab(tabName, btn) {
@@ -1435,6 +1644,257 @@
             sidebar.classList.remove('open');
         }
     });
+    // ── LESSONS ──
+    let lessons = [];
+    let selectedMp3 = null;
+    let selectedPdf = null;
+
+    async function loadLessons() {
+        try {
+            const res = await fetch('/api/admin/lessons');
+            lessons = await res.json();
+        } catch(e) { lessons = []; }
+        renderLessons();
+    }
+
+    function handleDragOver(e, zoneId) {
+        e.preventDefault();
+        document.getElementById(zoneId).classList.add('drag-over');
+    }
+
+    function handleDragLeave(zoneId) {
+        document.getElementById(zoneId).classList.remove('drag-over');
+    }
+
+    function handleDrop(e, type) {
+        e.preventDefault();
+        const zoneId = type === 'mp3' ? 'mp3Zone' : 'pdfZone';
+        document.getElementById(zoneId).classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        applyFile(type, file);
+    }
+
+    function handleFileSelect(e, type) {
+        const file = e.target.files[0];
+        if (!file) return;
+        applyFile(type, file);
+    }
+
+    function applyFile(type, file) {
+        if (type === 'mp3') {
+            if (!file.name.match(/\.mp3$/i) && file.type !== 'audio/mpeg') { alert('Please select an MP3 file.'); return; }
+            selectedMp3 = file;
+            document.getElementById('mp3Zone').classList.add('has-file');
+            document.getElementById('mp3Label').textContent = '✅ ' + file.name;
+        } else {
+            if (!file.name.match(/\.pdf$/i) && file.type !== 'application/pdf') { alert('Please select a PDF file.'); return; }
+            selectedPdf = file;
+            document.getElementById('pdfZone').classList.add('has-file');
+            document.getElementById('pdfLabel').textContent = '✅ ' + file.name;
+        }
+    }
+
+    async function uploadLesson() {
+        const title = document.getElementById('lessonTitle').value.trim();
+        if (!title) { alert('Please enter a lesson title.'); return; }
+        if (!selectedMp3 && !selectedPdf) { alert('Please select at least one file (MP3 or PDF).'); return; }
+
+        const statusEl = document.getElementById('lessonUploadStatus');
+        statusEl.textContent = '⏳ Uploading…';
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('category', document.getElementById('lessonCategory').value);
+        formData.append('description', document.getElementById('lessonDesc').value.trim());
+        if (selectedMp3) formData.append('mp3', selectedMp3);
+        if (selectedPdf) formData.append('pdf', selectedPdf);
+
+        try {
+            const res = await fetch('/api/admin/lessons', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                statusEl.textContent = '✅ Lesson uploaded successfully!';
+                setTimeout(() => statusEl.textContent = '', 4000);
+                clearLessonForm();
+                loadLessons();
+            } else {
+                statusEl.textContent = '❌ ' + (data.message || 'Upload failed');
+            }
+        } catch(e) {
+            statusEl.textContent = '❌ Upload failed. Check your connection.';
+        }
+    }
+
+    function clearLessonForm() {
+        document.getElementById('lessonTitle').value = '';
+        document.getElementById('lessonDesc').value = '';
+        document.getElementById('lessonCategory').value = 'Teaching';
+        selectedMp3 = null; selectedPdf = null;
+        ['mp3Zone','pdfZone'].forEach(id => document.getElementById(id).classList.remove('has-file','drag-over'));
+        document.getElementById('mp3Label').textContent = 'Drop MP3 here or click to browse';
+        document.getElementById('pdfLabel').textContent = 'Drop PDF here or click to browse';
+        document.getElementById('mp3Input').value = '';
+        document.getElementById('pdfInput').value = '';
+    }
+
+    async function deleteLesson(id) {
+        if (!confirm('Delete this lesson?')) return;
+        try {
+            await fetch('/api/admin/lessons/' + id, { method: 'DELETE' });
+            loadLessons();
+        } catch(e) { alert('Delete failed.'); }
+    }
+
+    function filterLessons() {
+        const q = document.getElementById('lessonSearch').value.toLowerCase();
+        const cat = document.getElementById('lessonCatFilter').value;
+        renderLessons(lessons.filter(l =>
+            (!q || l.title.toLowerCase().includes(q) || (l.description||'').toLowerCase().includes(q)) &&
+            (!cat || l.category === cat)
+        ));
+    }
+
+    function renderLessons(list) {
+        list = list || lessons;
+        const container = document.getElementById('lessonsList');
+        const empty = document.getElementById('lessonsEmpty');
+
+        if (!list.length) {
+            container.innerHTML = '';
+            empty.style.display = '';
+            return;
+        }
+        empty.style.display = 'none';
+
+        container.innerHTML = list.map(l => {
+            const hasAudio = !!l.mp3_name;
+            const hasPdf   = !!l.pdf_name;
+            const thumbCls = hasAudio && hasPdf ? 'both' : hasAudio ? 'audio' : 'pdf';
+            const thumbIcon = hasAudio && hasPdf ? '🎓' : hasAudio ? '🎵' : '📄';
+            const date = new Date(l.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+
+            const catColors = { Teaching:'rgba(244,196,48,0.18)', Worship:'rgba(192,132,252,0.18)', Study:'rgba(96,165,250,0.18)', Sermon:'rgba(82,183,136,0.18)', Other:'rgba(255,255,255,0.1)' };
+            const catColor = catColors[l.category] || catColors.Other;
+
+            const audioBtn = hasAudio
+                ? `<a class="btn btn-ghost btn-sm" href="${l.mp3_path}" target="_blank">▶ Play</a>` : '';
+            const pdfBtn = hasPdf
+                ? `<a class="btn btn-ghost btn-sm" href="${l.pdf_path}" target="_blank">📄 View PDF</a>` : '';
+
+            return `
+            <div class="lesson-card" id="lesson-${l.id}">
+                <div class="lesson-thumb ${thumbCls}">${thumbIcon}</div>
+                <div class="lesson-info">
+                    <div class="lesson-title-text">${l.title}</div>
+                    <div class="lesson-meta">
+                        <span style="background:${catColor};padding:0.15rem 0.6rem;border-radius:50px;font-size:0.7rem;font-weight:600;">${l.category}</span>
+                        ${hasAudio ? `<span>🎵 ${l.mp3_name}</span>` : ''}
+                        ${hasPdf   ? `<span>📄 ${l.pdf_name}</span>`  : ''}
+                        <span>${date}</span>
+                    </div>
+                    ${l.description ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;font-weight:300;">${l.description}</div>` : ''}
+                </div>
+                <div class="lesson-actions">
+                    ${audioBtn}
+                    ${pdfBtn}
+                    <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">✕</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // Load lessons on init
+    loadLessons();
+
+    function handleDragOver(e, zoneId) {
+        e.preventDefault();
+        document.getElementById(zoneId).classList.add('drag-over');
+    }
+
+    function handleDragLeave(zoneId) {
+        document.getElementById(zoneId).classList.remove('drag-over');
+    }
+
+    function handleDrop(e, type) {
+        e.preventDefault();
+        const zoneId = type === 'mp3' ? 'mp3Zone' : 'pdfZone';
+        document.getElementById(zoneId).classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        applyFile(type, file);
+    }
+
+    function handleFileSelect(e, type) {
+        const file = e.target.files[0];
+        if (!file) return;
+        applyFile(type, file);
+    }
+
+    function applyFile(type, file) {
+        if (type === 'mp3') {
+            if (!file.name.match(/\.mp3$/i) && file.type !== 'audio/mpeg') {
+                alert('Please select an MP3 file.');
+                return;
+            }
+            selectedMp3 = file;
+            const zone = document.getElementById('mp3Zone');
+            zone.classList.add('has-file');
+            document.getElementById('mp3Label').textContent = '✅ ' + file.name;
+        } else {
+            if (!file.name.match(/\.pdf$/i) && file.type !== 'application/pdf') {
+                alert('Please select a PDF file.');
+                return;
+            }
+            selectedPdf = file;
+            const zone = document.getElementById('pdfZone');
+            zone.classList.add('has-file');
+            document.getElementById('pdfLabel').textContent = '✅ ' + file.name;
+        }
+    }
+
+    function uploadLesson() {
+        const title = document.getElementById('lessonTitle').value.trim();
+        if (!title) { alert('Please enter a lesson title.'); return; }
+        if (!selectedMp3 && !selectedPdf) { alert('Please select at least one file (MP3 or PDF).'); return; }
+
+        const category = document.getElementById('lessonCategory').value;
+        const desc = document.getElementById('lessonDesc').value.trim();
+        const now = new Date();
+
+        const lesson = {
+            id: Date.now(),
+            title,
+            category,
+            desc,
+            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            mp3Name: selectedMp3 ? selectedMp3.name : null,
+            mp3Size: selectedMp3 ? formatBytes(selectedMp3.size) : null,
+            pdfName: selectedPdf ? selectedPdf.name : null,
+            pdfSize: selectedPdf ? formatBytes(selectedPdf.size) : null,
+        };
+
+        // Store file data as base64 URLs for playback/download
+        const readers = [];
+        if (selectedMp3) {
+            readers.push(new Promise(res => {
+                const r = new FileReader();
+                r.onload = e => { lesson.mp3Data = e.target.result; res(); };
+                r.readAsDataURL(selectedMp3);
+            }));
+        }
+        if (selectedPdf) {
+            readers.push(new Promise(res => {
+                const r = new FileReader();
+                r.onload = e => { lesson.pdfData = e.target.result; res(); };
+                r.readAsDataURL(selectedPdf);
+            }));
+        }
+
+        const statusEl = document.getElementById('lessonUploadStatus');
+    // Load lessons on init
+    loadLessons();
+
     </script>
 </body>
 </html>

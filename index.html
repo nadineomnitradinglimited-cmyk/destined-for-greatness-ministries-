@@ -17,22 +17,25 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-        --gold: #F4C430;
-        --gold-light: #fde98a;
-        --gold-dim: rgba(244,196,48,0.15);
-        --dark: #0a0807;
-        --dark2: #130f0a;
-        --dark3: #1c1610;
-        --cream: #faf8f3;
-        --warm: #f5f0e8;
-        --gray: #7c6e5a;
+        --gold: #F2B705;
+        --gold-light: #FFD93D;
+        --gold-dim: rgba(242,183,5,0.15);
+        --gold-deep: #C98B00;
+        --dark: #0d1a0f;
+        --dark2: #122015;
+        --dark3: #1a2e1d;
+        --cream: #f4f9f0;
+        --warm: #edf4e8;
+        --gray: #5a7060;
         --white: #ffffff;
-        --green: #2d6a4f;
-        --green-light: #52b788;
+        --green: #2a6b3a;
+        --green-mid: #3a8c4e;
+        --green-light: #5ab870;
+        --green-pale: rgba(42,107,58,0.12);
         --radius: 18px;
-        --shadow: 0 4px 28px rgba(10,8,7,0.09);
-        --shadow-lg: 0 16px 56px rgba(10,8,7,0.16);
-        --border: 1px solid rgba(244,196,48,0.14);
+        --shadow: 0 4px 28px rgba(13,26,15,0.10);
+        --shadow-lg: 0 16px 56px rgba(13,26,15,0.18);
+        --border: 1px solid rgba(242,183,5,0.18);
     }
 
     html { scroll-behavior: smooth; }
@@ -473,13 +476,13 @@
     }
 
     .btn-green {
-        background: linear-gradient(135deg, var(--green), var(--green-light));
+        background: linear-gradient(135deg, var(--green), var(--green-mid));
         color: white;
     }
 
     .btn-green:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(45,106,79,0.4);
+        box-shadow: 0 8px 24px rgba(42,107,58,0.45);
     }
 
     .btn-dark {
@@ -496,15 +499,15 @@
 
     /* ══ TICKER ══ */
     .ticker-belt {
-        background: var(--gold);
+        background: var(--green);
         overflow: hidden;
         height: 50px;
         display: flex;
         align-items: center;
         position: relative;
         z-index: 10;
-        border-top: 2px solid rgba(0,0,0,0.1);
-        border-bottom: 2px solid rgba(0,0,0,0.1);
+        border-top: 2px solid rgba(0,0,0,0.15);
+        border-bottom: 2px solid rgba(0,0,0,0.15);
     }
 
     .ticker-label {
@@ -543,7 +546,7 @@
         white-space: nowrap;
         font-size: 0.86rem;
         font-weight: 700;
-        color: var(--dark);
+        color: rgba(255,255,255,0.92);
         padding: 0 2rem;
         letter-spacing: 0.01em;
     }
@@ -551,7 +554,7 @@
     .ticker-dot {
         width: 5px; height: 5px;
         border-radius: 50%;
-        background: rgba(0,0,0,0.25);
+        background: rgba(242,183,5,0.7);
         flex-shrink: 0;
     }
 
@@ -951,8 +954,8 @@
     .impact-item p { font-size: 0.84rem; color: var(--gray); line-height: 1.65; font-weight: 300; }
 
     .tax-badge {
-        background: rgba(45,106,79,0.07);
-        border: 1px solid rgba(45,106,79,0.2);
+        background: rgba(42,107,58,0.09);
+        border: 1px solid rgba(42,107,58,0.25);
         color: var(--green);
         padding: 0.9rem 1.25rem;
         border-radius: 12px;
@@ -1484,8 +1487,177 @@
         .donate-card { padding: 1.5rem; }
         .contact-form-card { padding: 1.5rem; }
     }
+    /* ══ LESSONS PUBLIC ══ */
+    .lessons-filterbar {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem;
+    }
+
+    .lesson-filter-btn {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.5);
+        padding: 0.45rem 1.1rem;
+        border-radius: 50px;
+        font-size: 0.83rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .lesson-filter-btn:hover {
+        border-color: rgba(242,183,5,0.35);
+        color: rgba(255,255,255,0.8);
+    }
+
+    .lesson-filter-btn.active {
+        background: rgba(242,183,5,0.15);
+        border-color: rgba(242,183,5,0.45);
+        color: var(--gold);
+    }
+
+    .lessons-pub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .lesson-pub-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        overflow: hidden;
+        transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .lesson-pub-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(242,183,5,0.3);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .lesson-pub-top {
+        padding: 1.75rem 1.75rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .lesson-pub-icon {
+        width: 50px; height: 50px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .lesson-pub-icon.audio { background: rgba(242,183,5,0.14); border: 1px solid rgba(242,183,5,0.25); }
+    .lesson-pub-icon.pdf   { background: rgba(90,184,112,0.14); border: 1px solid rgba(90,184,112,0.25); }
+    .lesson-pub-icon.both  { background: rgba(42,107,58,0.2);   border: 1px solid rgba(90,184,112,0.3); }
+
+    .lesson-pub-info { flex: 1; min-width: 0; }
+
+    .lesson-pub-cat {
+        display: inline-block;
+        font-size: 0.67rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.35rem;
+    }
+
+    .lesson-pub-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    .lesson-pub-body {
+        padding: 1rem 1.75rem 1.5rem;
+    }
+
+    .lesson-pub-desc {
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.45);
+        line-height: 1.75;
+        font-weight: 300;
+        margin-bottom: 1.1rem;
+    }
+
+    .lesson-pub-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .lesson-pub-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .lesson-pub-btn.play {
+        background: rgba(242,183,5,0.15);
+        color: var(--gold);
+        border: 1px solid rgba(242,183,5,0.3);
+    }
+
+    .lesson-pub-btn.play:hover {
+        background: rgba(242,183,5,0.25);
+        transform: translateY(-1px);
+    }
+
+    .lesson-pub-btn.pdf {
+        background: rgba(90,184,112,0.12);
+        color: var(--green-light);
+        border: 1px solid rgba(90,184,112,0.25);
+    }
+
+    .lesson-pub-btn.pdf:hover {
+        background: rgba(90,184,112,0.2);
+        transform: translateY(-1px);
+    }
+
+    .lesson-audio-player {
+        margin-top: 0.85rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .lesson-audio-player audio {
+        width: 100%;
+        border-radius: 8px;
+        accent-color: var(--gold);
+    }
+
+    .lessons-pub-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .lessons-pub-grid { grid-template-columns: 1fr; }
+    }
+
     </style>
-</head>
 <body>
 
     <div id="progress-bar"></div>
@@ -1504,6 +1676,7 @@
             <li><a href="#ministries">Ministries</a></li>
             <li><a href="#events">Events</a></li>
             <li><a href="school.html">School</a></li>
+            <li><a href="#lessons">Lessons</a></li>
             <li><a href="#donate">Donate</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="#donate" class="nav-donate">Give Now ✦</a></li>
@@ -1861,6 +2034,35 @@
 
             <div class="events-grid stagger" id="eventsGrid">
                 <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ LESSONS ══ -->
+    <section class="section section-dark" id="lessons">
+        <div class="container">
+            <span class="section-label reveal">Resources</span>
+            <div class="gold-rule reveal"></div>
+            <h2 class="section-title light reveal">Lessons &amp; Teachings</h2>
+            <p class="section-desc light reveal">Audio teachings and study materials from our pastoral team — listen online or download to study at your own pace.</p>
+
+            <!-- Filter bar -->
+            <div class="lessons-filterbar reveal">
+                <button class="lesson-filter-btn active" onclick="filterLessonsCat('', this)">All</button>
+                <button class="lesson-filter-btn" onclick="filterLessonsCat('Teaching', this)">Teaching</button>
+                <button class="lesson-filter-btn" onclick="filterLessonsCat('Sermon', this)">Sermons</button>
+                <button class="lesson-filter-btn" onclick="filterLessonsCat('Study', this)">Bible Study</button>
+                <button class="lesson-filter-btn" onclick="filterLessonsCat('Worship', this)">Worship</button>
+                <button class="lesson-filter-btn" onclick="filterLessonsCat('Other', this)">Other</button>
+            </div>
+
+            <div id="publicLessonsGrid" class="lessons-pub-grid stagger">
+                <!-- Populated by JS -->
+            </div>
+
+            <div id="publicLessonsEmpty" class="lessons-pub-empty" style="display:none;">
+                <div style="font-size:2.5rem;margin-bottom:1rem;opacity:0.4;">🎓</div>
+                <p style="color:rgba(255,255,255,0.4);font-size:0.95rem;">No lessons published yet. Check back soon!</p>
             </div>
         </div>
     </section>
@@ -2286,7 +2488,7 @@
         const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
         document.getElementById('progress-bar').style.width = pct + '%';
 
-        const sections = ['home', 'ministries', 'events', 'donate', 'contact'];
+        const sections = ['home', 'ministries', 'events', 'lessons', 'donate', 'contact'];
         let current = '';
         sections.forEach(id => {
             const el = document.getElementById(id);
@@ -2515,6 +2717,85 @@
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         });
     }
+    // ── PUBLIC LESSONS ──
+    let pubLessons = [];
+    let pubCatFilter = '';
+
+    async function loadPublicLessons() {
+        try {
+            const res = await fetch('/api/lessons');
+            pubLessons = await res.json();
+        } catch(e) { pubLessons = []; }
+        renderPublicLessons();
+    }
+
+    function filterLessonsCat(cat, btn) {
+        pubCatFilter = cat;
+        document.querySelectorAll('.lesson-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderPublicLessons();
+    }
+
+    function renderPublicLessons() {
+        const grid = document.getElementById('publicLessonsGrid');
+        const empty = document.getElementById('publicLessonsEmpty');
+        const list = pubCatFilter ? pubLessons.filter(l => l.category === pubCatFilter) : pubLessons;
+
+        if (!list.length) {
+            grid.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+        empty.style.display = 'none';
+
+        grid.innerHTML = list.map(l => {
+            const hasAudio = !!l.mp3_name;
+            const hasPdf   = !!l.pdf_name;
+            const iconCls  = hasAudio && hasPdf ? 'both' : hasAudio ? 'audio' : 'pdf';
+            const iconEmoji = hasAudio && hasPdf ? '🎓' : hasAudio ? '🎵' : '📄';
+
+            const playBtn = hasAudio
+                ? `<button class="lesson-pub-btn play" onclick="pubPlayAudio('${l.id}')">▶ Listen</button>` : '';
+            const pdfBtn  = hasPdf
+                ? `<a class="lesson-pub-btn pdf" href="${l.pdf_path}" target="_blank">📄 Study Notes</a>` : '';
+
+            return `
+            <div class="lesson-pub-card" id="pub-lesson-${l.id}">
+                <div class="lesson-pub-top">
+                    <div class="lesson-pub-icon ${iconCls}">${iconEmoji}</div>
+                    <div class="lesson-pub-info">
+                        <span class="lesson-pub-cat">${l.category}</span>
+                        <div class="lesson-pub-title">${l.title}</div>
+                    </div>
+                </div>
+                <div class="lesson-pub-body">
+                    ${l.description ? `<p class="lesson-pub-desc">${l.description}</p>` : ''}
+                    <div class="lesson-pub-actions">
+                        ${playBtn}
+                        ${pdfBtn}
+                    </div>
+                    <div id="pub-player-${l.id}"></div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function pubPlayAudio(id) {
+        const lesson = pubLessons.find(l => String(l.id) === String(id));
+        if (!lesson || !lesson.mp3_path) return;
+        const playerEl = document.getElementById('pub-player-' + id);
+        if (playerEl.querySelector('audio')) {
+            const aud = playerEl.querySelector('audio');
+            aud.paused ? aud.play() : aud.pause();
+            return;
+        }
+        playerEl.innerHTML = `
+            <div class="lesson-audio-player">
+                <audio controls autoplay src="${lesson.mp3_path}"></audio>
+            </div>`;
+    }
+
+    loadPublicLessons();
+
     </script>
-</body>
 </html>

@@ -5,6 +5,8 @@ const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STR
 const Database = require('better-sqlite3');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
 
@@ -71,6 +73,19 @@ db.exec(`
         reference TEXT NOT NULL,
         verse_text TEXT NOT NULL,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS lessons (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        category TEXT DEFAULT 'Teaching',
+        description TEXT,
+        mp3_name TEXT,
+        mp3_path TEXT,
+        pdf_name TEXT,
+        pdf_path TEXT,
+        active BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 `);
 
@@ -307,6 +322,101 @@ app.get('/api/admin/export-donations', (req, res) => {
         res.setHeader('Content-Disposition', 'attachment; filename="donations.csv"');
         res.send(csv);
     } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── File upload setup (lessons) ──
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => {
+        const safe = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+        cb(null, Date.now() + '_' + safe);
+    }
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+    fileFilter: (req, file, cb) => {
+        const allowed = ['audio/mpeg', 'application/pdf'];
+        cb(null, allowed.includes(file.mimetype));
+    }
+});
+
+// Serve uploaded files
+app.use('/uploads', express.static(uploadsDir));
+
+// ── PUBLIC: Get all active lessons ──
+app.get('/api/lessons', (req, res) => {
+    try {
+        const rows = db.prepare(`
+            SELECT id, title, category, description, mp3_name, mp3_path, pdf_name, pdf_path, created_at
+            FROM lessons WHERE active = 1 ORDER BY created_at DESC
+        `).all();
+        res.json(rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── ADMIN: Get all lessons (including inactive) ──
+app.get('/api/admin/lessons', (req, res) => {
+    try {
+        const rows = db.prepare('SELECT * FROM lessons ORDER BY created_at DESC').all();
+        res.json(rows);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── ADMIN: Upload new lesson ──
+app.post('/api/admin/lessons', upload.fields([
+    { name: 'mp3', maxCount: 1 },
+    { name: 'pdf', maxCount: 1 }
+]), (req, res) => {
+    try {
+        const { title, category, description } = req.body;
+        if (!title) return res.status(400).json({ success: false, message: 'Title is required' });
+
+        const mp3  = req.files?.mp3?.[0];
+        const pdf  = req.files?.pdf?.[0];
+
+        if (!mp3 && !pdf) return res.status(400).json({ success: false, message: 'At least one file (MP3 or PDF) is required' });
+
+        const result = db.prepare(`
+            INSERT INTO lessons (title, category, description, mp3_name, mp3_path, pdf_name, pdf_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            title,
+            category || 'Teaching',
+            description || '',
+            mp3 ? mp3.originalname : null,
+            mp3 ? '/uploads/' + mp3.filename : null,
+            pdf ? pdf.originalname : null,
+            pdf ? '/uploads/' + pdf.filename : null
+        );
+
+        res.json({ success: true, id: result.lastInsertRowid });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+// ── ADMIN: Delete lesson ──
+app.delete('/api/admin/lessons/:id', (req, res) => {
+    try {
+        const lesson = db.prepare('SELECT * FROM lessons WHERE id = ?').get(req.params.id);
+        if (!lesson) return res.status(404).json({ success: false, message: 'Lesson not found' });
+
+        // Delete physical files
+        [lesson.mp3_path, lesson.pdf_path].forEach(p => {
+            if (p) {
+                const full = path.join(__dirname, p);
+                if (fs.existsSync(full)) fs.unlinkSync(full);
+            }
+        });
+
+        db.prepare('DELETE FROM lessons WHERE id = ?').run(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
 // Health check
