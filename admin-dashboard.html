@@ -1106,7 +1106,7 @@
                 <div class="panel-body">
                     <p style="font-size:0.84rem;color:var(--muted);margin-bottom:1.5rem;font-weight:300;">Upload MP3 audio lessons or PDF study materials. Files are stored in the browser for demo purposes.</p>
 
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
                         <div>
                             <label class="field-label">Lesson Title *</label>
                             <input class="search-input" style="width:100%;" id="lessonTitle" placeholder="e.g. Faith & Purpose – Part 1">
@@ -1120,6 +1120,10 @@
                                 <option value="Sermon">Sermon</option>
                                 <option value="Other">Other</option>
                             </select>
+                        </div>
+                        <div>
+                            <label class="field-label">Price (USD) — 0 = Free</label>
+                            <input class="search-input" style="width:100%;" id="lessonPrice" type="number" min="0" step="0.01" placeholder="e.g. 5.00" value="0">
                         </div>
                     </div>
 
@@ -1700,6 +1704,7 @@
         if (!title) { alert('Please enter a lesson title.'); return; }
         if (!selectedMp3 && !selectedPdf) { alert('Please select at least one file (MP3 or PDF).'); return; }
 
+        const price = parseFloat(document.getElementById('lessonPrice').value) || 0;
         const statusEl = document.getElementById('lessonUploadStatus');
         statusEl.textContent = '⏳ Uploading…';
 
@@ -1707,6 +1712,7 @@
         formData.append('title', title);
         formData.append('category', document.getElementById('lessonCategory').value);
         formData.append('description', document.getElementById('lessonDesc').value.trim());
+        formData.append('price', price);
         if (selectedMp3) formData.append('mp3', selectedMp3);
         if (selectedPdf) formData.append('pdf', selectedPdf);
 
@@ -1722,7 +1728,38 @@
                 statusEl.textContent = '❌ ' + (data.message || 'Upload failed');
             }
         } catch(e) {
-            statusEl.textContent = '❌ Upload failed. Check your connection.';
+            // Fallback: store locally in memory
+            const lesson = {
+                id: Date.now(),
+                title,
+                category: document.getElementById('lessonCategory').value,
+                description: document.getElementById('lessonDesc').value.trim(),
+                price,
+                created_at: new Date().toISOString(),
+                mp3_name: selectedMp3 ? selectedMp3.name : null,
+                pdf_name: selectedPdf ? selectedPdf.name : null,
+            };
+            const readers = [];
+            if (selectedMp3) {
+                readers.push(new Promise(res => {
+                    const r = new FileReader();
+                    r.onload = ev => { lesson.mp3_data = ev.target.result; res(); };
+                    r.readAsDataURL(selectedMp3);
+                }));
+            }
+            if (selectedPdf) {
+                readers.push(new Promise(res => {
+                    const r = new FileReader();
+                    r.onload = ev => { lesson.pdf_data = ev.target.result; res(); };
+                    r.readAsDataURL(selectedPdf);
+                }));
+            }
+            await Promise.all(readers);
+            lessons.unshift(lesson);
+            statusEl.textContent = '✅ Lesson saved locally!';
+            setTimeout(() => statusEl.textContent = '', 4000);
+            clearLessonForm();
+            renderLessons();
         }
     }
 
@@ -1730,6 +1767,7 @@
         document.getElementById('lessonTitle').value = '';
         document.getElementById('lessonDesc').value = '';
         document.getElementById('lessonCategory').value = 'Teaching';
+        document.getElementById('lessonPrice').value = '0';
         selectedMp3 = null; selectedPdf = null;
         ['mp3Zone','pdfZone'].forEach(id => document.getElementById(id).classList.remove('has-file','drag-over'));
         document.getElementById('mp3Label').textContent = 'Drop MP3 here or click to browse';
@@ -1768,19 +1806,41 @@
         empty.style.display = 'none';
 
         container.innerHTML = list.map(l => {
-            const hasAudio = !!l.mp3_name;
-            const hasPdf   = !!l.pdf_name;
+            const hasAudio = !!(l.mp3_name || l.mp3_data);
+            const hasPdf   = !!(l.pdf_name || l.pdf_data);
             const thumbCls = hasAudio && hasPdf ? 'both' : hasAudio ? 'audio' : 'pdf';
             const thumbIcon = hasAudio && hasPdf ? '🎓' : hasAudio ? '🎵' : '📄';
             const date = new Date(l.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+            const price = parseFloat(l.price) || 0;
+            const isFree = price === 0;
+            const priceLabel = isFree
+                ? `<span style="background:rgba(82,183,136,0.2);color:#52b788;padding:0.15rem 0.6rem;border-radius:50px;font-size:0.7rem;font-weight:700;">FREE</span>`
+                : `<span style="background:rgba(242,183,5,0.18);color:var(--gold);padding:0.15rem 0.6rem;border-radius:50px;font-size:0.7rem;font-weight:700;">$${price.toFixed(2)}</span>`;
 
             const catColors = { Teaching:'rgba(244,196,48,0.18)', Worship:'rgba(192,132,252,0.18)', Study:'rgba(96,165,250,0.18)', Sermon:'rgba(82,183,136,0.18)', Other:'rgba(255,255,255,0.1)' };
             const catColor = catColors[l.category] || catColors.Other;
 
-            const audioBtn = hasAudio
-                ? `<a class="btn btn-ghost btn-sm" href="${l.mp3_path}" target="_blank">▶ Play</a>` : '';
-            const pdfBtn = hasPdf
-                ? `<a class="btn btn-ghost btn-sm" href="${l.pdf_path}" target="_blank">📄 View PDF</a>` : '';
+            // Admin always sees full controls; purchase gate shown as indicator only
+            let audioBtn = '';
+            if (hasAudio) {
+                if (l.mp3_data) {
+                    audioBtn = `<a class="btn btn-ghost btn-sm" href="${l.mp3_data}" download="${l.mp3_name || 'audio.mp3'}">▶ Play</a>`;
+                } else if (l.mp3_path) {
+                    audioBtn = `<a class="btn btn-ghost btn-sm" href="${l.mp3_path}" target="_blank">▶ Play</a>`;
+                }
+            }
+            let pdfBtn = '';
+            if (hasPdf) {
+                if (l.pdf_data) {
+                    pdfBtn = `<a class="btn btn-ghost btn-sm" href="${l.pdf_data}" download="${l.pdf_name || 'lesson.pdf'}">📄 PDF</a>`;
+                } else if (l.pdf_path) {
+                    pdfBtn = `<a class="btn btn-ghost btn-sm" href="${l.pdf_path}" target="_blank">📄 PDF</a>`;
+                }
+            }
+
+            const lockNote = !isFree
+                ? `<span style="font-size:0.7rem;color:var(--muted);">🔒 Requires purchase on front-end</span>`
+                : '';
 
             return `
             <div class="lesson-card" id="lesson-${l.id}">
@@ -1789,109 +1849,42 @@
                     <div class="lesson-title-text">${l.title}</div>
                     <div class="lesson-meta">
                         <span style="background:${catColor};padding:0.15rem 0.6rem;border-radius:50px;font-size:0.7rem;font-weight:600;">${l.category}</span>
-                        ${hasAudio ? `<span>🎵 ${l.mp3_name}</span>` : ''}
-                        ${hasPdf   ? `<span>📄 ${l.pdf_name}</span>`  : ''}
+                        ${priceLabel}
+                        ${hasAudio ? `<span>🎵 ${l.mp3_name || 'audio'}</span>` : ''}
+                        ${hasPdf   ? `<span>📄 ${l.pdf_name || 'pdf'}</span>`  : ''}
                         <span>${date}</span>
                     </div>
                     ${l.description ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;font-weight:300;">${l.description}</div>` : ''}
+                    ${lockNote ? `<div style="margin-top:0.35rem;">${lockNote}</div>` : ''}
                 </div>
                 <div class="lesson-actions">
                     ${audioBtn}
                     ${pdfBtn}
+                    <button class="btn btn-ghost btn-sm" onclick="editLessonPrice(${l.id})" title="Edit price">✏️ Price</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">✕</button>
                 </div>
             </div>`;
         }).join('');
     }
 
-    // Load lessons on init
-    loadLessons();
-
-    function handleDragOver(e, zoneId) {
-        e.preventDefault();
-        document.getElementById(zoneId).classList.add('drag-over');
+    function editLessonPrice(id) {
+        const lesson = lessons.find(l => l.id === id);
+        if (!lesson) return;
+        const current = parseFloat(lesson.price) || 0;
+        const val = prompt(`Set price for "${lesson.title}" (enter 0 for free):`, current.toFixed(2));
+        if (val === null) return;
+        const newPrice = parseFloat(val);
+        if (isNaN(newPrice) || newPrice < 0) { alert('Please enter a valid price (0 or more).'); return; }
+        lesson.price = newPrice;
+        // Try to persist to server
+        fetch('/api/admin/lessons/' + id, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ price: newPrice })
+        }).catch(() => {});
+        renderLessons();
     }
 
-    function handleDragLeave(zoneId) {
-        document.getElementById(zoneId).classList.remove('drag-over');
-    }
-
-    function handleDrop(e, type) {
-        e.preventDefault();
-        const zoneId = type === 'mp3' ? 'mp3Zone' : 'pdfZone';
-        document.getElementById(zoneId).classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
-        applyFile(type, file);
-    }
-
-    function handleFileSelect(e, type) {
-        const file = e.target.files[0];
-        if (!file) return;
-        applyFile(type, file);
-    }
-
-    function applyFile(type, file) {
-        if (type === 'mp3') {
-            if (!file.name.match(/\.mp3$/i) && file.type !== 'audio/mpeg') {
-                alert('Please select an MP3 file.');
-                return;
-            }
-            selectedMp3 = file;
-            const zone = document.getElementById('mp3Zone');
-            zone.classList.add('has-file');
-            document.getElementById('mp3Label').textContent = '✅ ' + file.name;
-        } else {
-            if (!file.name.match(/\.pdf$/i) && file.type !== 'application/pdf') {
-                alert('Please select a PDF file.');
-                return;
-            }
-            selectedPdf = file;
-            const zone = document.getElementById('pdfZone');
-            zone.classList.add('has-file');
-            document.getElementById('pdfLabel').textContent = '✅ ' + file.name;
-        }
-    }
-
-    function uploadLesson() {
-        const title = document.getElementById('lessonTitle').value.trim();
-        if (!title) { alert('Please enter a lesson title.'); return; }
-        if (!selectedMp3 && !selectedPdf) { alert('Please select at least one file (MP3 or PDF).'); return; }
-
-        const category = document.getElementById('lessonCategory').value;
-        const desc = document.getElementById('lessonDesc').value.trim();
-        const now = new Date();
-
-        const lesson = {
-            id: Date.now(),
-            title,
-            category,
-            desc,
-            date: now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-            mp3Name: selectedMp3 ? selectedMp3.name : null,
-            mp3Size: selectedMp3 ? formatBytes(selectedMp3.size) : null,
-            pdfName: selectedPdf ? selectedPdf.name : null,
-            pdfSize: selectedPdf ? formatBytes(selectedPdf.size) : null,
-        };
-
-        // Store file data as base64 URLs for playback/download
-        const readers = [];
-        if (selectedMp3) {
-            readers.push(new Promise(res => {
-                const r = new FileReader();
-                r.onload = e => { lesson.mp3Data = e.target.result; res(); };
-                r.readAsDataURL(selectedMp3);
-            }));
-        }
-        if (selectedPdf) {
-            readers.push(new Promise(res => {
-                const r = new FileReader();
-                r.onload = e => { lesson.pdfData = e.target.result; res(); };
-                r.readAsDataURL(selectedPdf);
-            }));
-        }
-
-        const statusEl = document.getElementById('lessonUploadStatus');
     // Load lessons on init
     loadLessons();
 
