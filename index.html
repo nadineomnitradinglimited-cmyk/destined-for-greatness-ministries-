@@ -154,8 +154,16 @@
         flex-direction: column;
         gap: 5px;
         cursor: pointer;
-        padding: 6px;
+        padding: 10px;
         border-radius: 8px;
+        background: none;
+        border: none;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+        min-width: 44px;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
     }
 
     .nav-toggle span {
@@ -165,6 +173,7 @@
         background: white;
         border-radius: 2px;
         transition: all 0.3s;
+        pointer-events: none;
     }
 
     /* ══ HERO ══ */
@@ -1455,9 +1464,9 @@
             overflow-y: auto;
             backdrop-filter: blur(20px);
         }
-        .nav-links.open { display: flex; }
+        .nav-links.open { display: flex; z-index: 299; }
         .nav-links a { font-size: 1rem; padding: 0.8rem 1rem; border-radius: 10px; }
-        .nav-toggle { display: flex; }
+        .nav-toggle { display: flex; z-index: 301; }
         .nav-logo-text strong { font-size: 0.88rem; }
 
         #home { padding: 5rem 1.25rem 5rem; }
@@ -1681,9 +1690,9 @@
             <li><a href="#contact">Contact</a></li>
             <li><a href="#donate" class="nav-donate">Give Now ✦</a></li>
         </ul>
-        <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+        <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Toggle menu">
             <span></span><span></span><span></span>
-        </div>
+        </button>
     </nav>
 
     <!-- ══ HERO ══ -->
