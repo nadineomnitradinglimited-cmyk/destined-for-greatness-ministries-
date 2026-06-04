@@ -419,6 +419,42 @@ app.delete('/api/admin/lessons/:id', (req, res) => {
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
+// ── Banner image upload ──
+const bannerUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 8 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        cb(null, file.mimetype.startsWith('image/'));
+    }
+});
+
+app.post('/api/admin/upload-banner/:slot', bannerUpload.single('banner'), (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ success: false, message: 'No image uploaded' });
+        const filename = req.params.slot === '2' ? 'banner2.jpg' : 'banner.jpg';
+        fs.writeFileSync(path.join(__dirname, filename), req.file.buffer);
+        res.json({ success: true, filename });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ── Verse shortcut ──
+app.post('/api/admin/upload-verse', (req, res) => {
+    try {
+        const text = String(req.body.verse || '').trim();
+        const ref  = String(req.body.reference || '').trim();
+        if (!text) return res.status(400).json({ success: false, message: 'Verse text required' });
+
+        const existing = db.prepare('SELECT id FROM bible_verses ORDER BY sort_order ASC LIMIT 1').get();
+        if (existing) {
+            db.prepare('UPDATE bible_verses SET verse_text = ?, reference = COALESCE(NULLIF(?, \'\'), reference), updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+              .run(text, ref, existing.id);
+        } else {
+            db.prepare('INSERT INTO bible_verses (sort_order, active, reference, verse_text) VALUES (0, 1, ?, ?)').run(ref || 'Scripture', text);
+        }
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'OK', timestamp: new Date() }));
 
